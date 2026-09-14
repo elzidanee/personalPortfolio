@@ -547,23 +547,23 @@ document.addEventListener("DOMContentLoaded", function () {
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-        // Spatial Node Particles
-        const particlesCount = 950;
+        // Subtle Ambient Starfield
+        const particlesCount = 420;
         const posArray = new Float32Array(particlesCount * 3);
         const colorArray = new Float32Array(particlesCount * 3);
 
-        const colorIndigo = new THREE.Color(0x5b7fff);
-        const colorCyan = new THREE.Color(0x00f0ff);
+        const colorSlate = new THREE.Color(0x64748b);
+        const colorAccent = new THREE.Color(0x5b7fff);
 
         for (let i = 0; i < particlesCount; i++) {
             const i3 = i * 3;
-            const radius = 12 + Math.random() * 45;
+            const radius = 10 + Math.random() * 40;
             const theta = Math.random() * Math.PI * 2;
             posArray[i3] = Math.cos(theta) * radius;
             posArray[i3 + 1] = (Math.random() - 0.5) * 80;
-            posArray[i3 + 2] = (Math.random() - 0.5) * 65;
+            posArray[i3 + 2] = (Math.random() - 0.5) * 55;
 
-            const chosen = Math.random() > 0.4 ? colorCyan : colorIndigo;
+            const chosen = Math.random() > 0.3 ? colorSlate : colorAccent;
             colorArray[i3] = chosen.r;
             colorArray[i3 + 1] = chosen.g;
             colorArray[i3 + 2] = chosen.b;
@@ -574,27 +574,15 @@ document.addEventListener("DOMContentLoaded", function () {
         geometry.setAttribute('color', new THREE.BufferAttribute(colorArray, 3));
 
         const material = new THREE.PointsMaterial({
-            size: 0.08,
+            size: 0.065,
             vertexColors: true,
             transparent: true,
-            opacity: 0.65,
+            opacity: 0.35,
             blending: THREE.AdditiveBlending
         });
 
         const particlesMesh = new THREE.Points(geometry, material);
         scene.add(particlesMesh);
-
-        // Ambient Wireframe Torus
-        const torusGeo = new THREE.TorusGeometry(8, 2.2, 16, 60);
-        const torusMat = new THREE.MeshBasicMaterial({
-            color: 0x5b7fff,
-            wireframe: true,
-            transparent: true,
-            opacity: 0.04
-        });
-        const torusMesh = new THREE.Mesh(torusGeo, torusMat);
-        torusMesh.position.set(14, -5, -8);
-        scene.add(torusMesh);
 
         let scrollProgress = 0;
         let targetCamZ = 24;
@@ -609,8 +597,8 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         document.addEventListener('mousemove', (e) => {
-            targetMouseX = (e.clientX / window.innerWidth - 0.5) * 3;
-            targetMouseY = (e.clientY / window.innerHeight - 0.5) * 3;
+            targetMouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+            targetMouseY = (e.clientY / window.innerHeight - 0.5) * 2;
         }, { passive: true });
 
         if (lenis) {
@@ -630,19 +618,16 @@ document.addEventListener("DOMContentLoaded", function () {
             requestAnimationFrame(animate3D);
             const elapsedTime = clock.getElapsedTime();
 
-            particlesMesh.rotation.y = elapsedTime * 0.03 + scrollProgress * Math.PI * 0.8;
-            particlesMesh.rotation.x = scrollProgress * 0.4;
+            particlesMesh.rotation.y = elapsedTime * 0.015 + scrollProgress * Math.PI * 0.5;
+            particlesMesh.rotation.x = scrollProgress * 0.25;
 
-            torusMesh.rotation.x = elapsedTime * 0.04 + scrollProgress * 1.8;
-            torusMesh.rotation.y = elapsedTime * 0.03;
-
-            targetCamZ = 24 - scrollProgress * 14;
-            targetCamY = -scrollProgress * 12 - targetMouseY;
+            targetCamZ = 24 - scrollProgress * 10;
+            targetCamY = -scrollProgress * 8 - targetMouseY;
             const targetCamX = targetMouseX;
 
-            camera.position.z += (targetCamZ - camera.position.z) * 0.05;
-            camera.position.y += (targetCamY - camera.position.y) * 0.05;
-            camera.position.x += (targetCamX - camera.position.x) * 0.05;
+            camera.position.z += (targetCamZ - camera.position.z) * 0.04;
+            camera.position.y += (targetCamY - camera.position.y) * 0.04;
+            camera.position.x += (targetCamX - camera.position.x) * 0.04;
 
             renderer.render(scene, camera);
         }
