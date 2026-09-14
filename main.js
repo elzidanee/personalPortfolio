@@ -1,11 +1,40 @@
 document.addEventListener("DOMContentLoaded", function () {
+    /* ── LENIS SMOOTH SCROLL INITIALIZATION ──────────────────── */
+    let lenis = null;
+    if (typeof Lenis !== 'undefined') {
+        lenis = new Lenis({
+            duration: 1.25,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            smoothWheel: true,
+            wheelMultiplier: 0.95,
+            touchMultiplier: 1.5,
+        });
+        window.lenis = lenis;
+
+        // Synchronize Lenis with GSAP ScrollTrigger
+        if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+            gsap.registerPlugin(ScrollTrigger);
+            lenis.on('scroll', ScrollTrigger.update);
+            gsap.ticker.add((time) => {
+                lenis.raf(time * 1000);
+            });
+            gsap.ticker.lagSmoothing(0);
+        } else {
+            function raf(time) {
+                lenis.raf(time);
+                requestAnimationFrame(raf);
+            }
+            requestAnimationFrame(raf);
+        }
+    }
+
     /* ── SPLASH SCREEN LOADER ────────────────────────────────── */
     const splash = document.getElementById('splash');
     const fill = document.getElementById('splash-fill');
     const lbl = document.getElementById('splash-label');
     const steps = [
         { p: 25, t: 'MENGINISIALISASI...' },
-        { p: 50, t: 'MEMUAT ASET...' },
+        { p: 50, t: 'MEMUAT ASET & 3D...' },
         { p: 75, t: 'MENYIAPKAN UI...' },
         { p: 95, t: 'HAMPIR SELESAI...' },
         { p: 100, t: 'SIAP!' }
@@ -13,52 +42,60 @@ document.addEventListener("DOMContentLoaded", function () {
     let si = 0;
 
     function nextStep() {
+        if (!splash) return;
         if (si >= steps.length) {
             setTimeout(() => {
                 splash.classList.add('exit');
                 setTimeout(() => splash.style.display = 'none', 700);
                 startAnimations();
-            }, 300);
+                initGSAPScrollAnimations();
+            }, 250);
             return;
         }
         const s = steps[si++];
-        fill.style.width = s.p + '%';
-        lbl.textContent = s.t;
-        setTimeout(nextStep, si === steps.length ? 300 : Math.random() * 200 + 150);
+        if (fill) fill.style.width = s.p + '%';
+        if (lbl) lbl.textContent = s.t;
+        setTimeout(nextStep, si === steps.length ? 250 : Math.random() * 180 + 120);
     }
     
-    // Start splash loading sequences
-    setTimeout(nextStep, 200);
+    setTimeout(nextStep, 150);
 
     // Skip splash on Escape key
     document.addEventListener('keydown', e => {
-        if (e.key === 'Escape' && splash.style.display !== 'none') {
-            fill.style.width = '100%';
+        if (e.key === 'Escape' && splash && splash.style.display !== 'none') {
+            if (fill) fill.style.width = '100%';
             setTimeout(() => {
                 splash.classList.add('exit');
                 setTimeout(() => {
                     splash.style.display = 'none';
                     startAnimations();
+                    initGSAPScrollAnimations();
                 }, 700);
-            }, 100);
+            }, 80);
         }
     });
 
     /* ── SCROLL PROGRESS BAR ─────────────────────────────────── */
     const prog = document.getElementById('scroll-progress');
-    window.addEventListener('scroll', () => {
-        const s = document.documentElement.scrollTop;
-        const h = document.documentElement.scrollHeight - window.innerHeight;
-        if (h > 0) {
-            prog.style.width = (s / h * 100) + '%';
-        }
-    });
+    if (lenis) {
+        lenis.on('scroll', (e) => {
+            if (prog) prog.style.width = (e.progress * 100) + '%';
+        });
+    } else {
+        window.addEventListener('scroll', () => {
+            const s = document.documentElement.scrollTop;
+            const h = document.documentElement.scrollHeight - window.innerHeight;
+            if (h > 0 && prog) {
+                prog.style.width = (s / h * 100) + '%';
+            }
+        });
+    }
 
     /* ── NAV SCROLL & ACTIVE LINK HIGHLIGHT ──────────────────── */
     const nav = document.getElementById('nav');
     window.addEventListener('scroll', () => {
-        nav.classList.toggle('scrolled', window.scrollY > 40);
-    });
+        if (nav) nav.classList.toggle('scrolled', window.scrollY > 40);
+    }, { passive: true });
 
     const navLinks = document.querySelectorAll('.nav-links a');
     const sectionIds = ['home', 'about', 'portfolio', 'skills', 'certificates', 'experience', 'contact'];
@@ -80,11 +117,18 @@ document.addEventListener("DOMContentLoaded", function () {
     /* ── BACK TO TOP ─────────────────────────────────────────── */
     const btt = document.getElementById('btt');
     window.addEventListener('scroll', () => {
-        btt.classList.toggle('visible', window.scrollY > 350);
-    });
-    btt.addEventListener('click', () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
+        if (btt) btt.classList.toggle('visible', window.scrollY > 350);
+    }, { passive: true });
+
+    if (btt) {
+        btt.addEventListener('click', () => {
+            if (lenis) {
+                lenis.scrollTo(0, { duration: 1.2 });
+            } else {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+    }
 
     /* ── MOBILE MENU NAVIGATION ──────────────────────────────── */
     const hmb = document.getElementById('hamburger');
@@ -92,28 +136,34 @@ document.addEventListener("DOMContentLoaded", function () {
     const mobileClose = document.getElementById('mobile-close');
     const mobileLinks = document.querySelectorAll('.mobile-link');
 
-    if (hmb) {
+    if (hmb && mobileNav) {
         hmb.addEventListener('click', () => mobileNav.classList.add('open'));
     }
-    if (mobileClose) {
+    if (mobileClose && mobileNav) {
         mobileClose.addEventListener('click', () => mobileNav.classList.remove('open'));
     }
     mobileLinks.forEach(a => {
-        a.addEventListener('click', () => mobileNav.classList.remove('open'));
+        a.addEventListener('click', () => {
+            if (mobileNav) mobileNav.classList.remove('open');
+        });
     });
 
-    /* ── SMOOTH SCROLL ANCHORS ───────────────────────────────── */
+    /* ── SMOOTH SCROLL ANCHORS WITH LENIS ─────────────────────── */
     document.querySelectorAll('a[href^="#"]').forEach(a => {
         a.addEventListener('click', e => {
-            e.preventDefault();
             const targetId = a.getAttribute('href');
-            if (targetId === '#') return;
+            if (targetId === '#' || !targetId) return;
             const targetEl = document.querySelector(targetId);
             if (targetEl) {
-                window.scrollTo({
-                    top: targetEl.offsetTop - 15,
-                    behavior: 'smooth'
-                });
+                e.preventDefault();
+                if (lenis) {
+                    lenis.scrollTo(targetEl, { offset: -25, duration: 1.2 });
+                } else {
+                    window.scrollTo({
+                        top: targetEl.offsetTop - 20,
+                        behavior: 'smooth'
+                    });
+                }
             }
         });
     });
@@ -123,6 +173,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const el = document.getElementById('notif');
         const icon = document.getElementById('notif-icon');
         const msgSpan = document.getElementById('notif-msg');
+        if (!el || !icon || !msgSpan) return;
         
         msgSpan.textContent = msg;
         el.className = 'show ' + type;
@@ -155,7 +206,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const lightboxCaption = document.getElementById('lightbox-caption');
     const lightboxClose = document.querySelector('.lightbox-close');
 
-    // Filtering logic
     certFilterBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             certFilterBtns.forEach(b => b.classList.remove('active'));
@@ -182,24 +232,24 @@ document.addEventListener("DOMContentLoaded", function () {
                     }, 250);
                 }
             });
+            if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
         });
     });
 
-    // Lightbox trigger
     certCards.forEach(card => {
         const imgWrap = card.querySelector('.cert-img-wrap');
         if (imgWrap) {
             imgWrap.addEventListener('click', (e) => {
                 e.stopPropagation();
                 const img = imgWrap.querySelector('img');
-                const title = card.querySelector('.cert-name').textContent;
-                const issuer = card.querySelector('.cert-issuer').textContent;
+                const title = card.querySelector('.cert-name') ? card.querySelector('.cert-name').textContent : '';
+                const issuer = card.querySelector('.cert-issuer') ? card.querySelector('.cert-issuer').textContent : '';
                 
-                if (img) {
+                if (img && certLightbox && lightboxImg && lightboxCaption) {
                     lightboxImg.src = img.src;
                     lightboxCaption.innerHTML = `${title} <br><span style="font-size:0.82rem;font-weight:400;color:var(--accent-2);">${issuer}</span>`;
                     certLightbox.classList.add('show');
-                    document.body.style.overflow = 'hidden'; // Lock body scroll
+                    document.body.style.overflow = 'hidden';
                 }
             });
         }
@@ -208,13 +258,11 @@ document.addEventListener("DOMContentLoaded", function () {
     function closeLightboxFunc() {
         if (certLightbox) {
             certLightbox.classList.remove('show');
-            document.body.style.overflow = ''; // Unlock body scroll
+            document.body.style.overflow = '';
         }
     }
 
-    if (lightboxClose) {
-        lightboxClose.addEventListener('click', closeLightboxFunc);
-    }
+    if (lightboxClose) lightboxClose.addEventListener('click', closeLightboxFunc);
     if (certLightbox) {
         certLightbox.addEventListener('click', (e) => {
             if (e.target === certLightbox || e.target.classList.contains('lightbox-close')) {
@@ -228,7 +276,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    /* ── INTERSECTION OBSERVER SCROLL ANIMATIONS ──────────────── */
+    /* ── BASE INTERSECTION OBSERVER ANIMATIONS ───────────────── */
     function startAnimations() {
         const obs = new IntersectionObserver(entries => {
             entries.forEach(e => {
@@ -239,9 +287,9 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         }, { threshold: 0.08, rootMargin: '0px 0px -20px 0px' });
 
-        document.querySelectorAll('.fade-in, .fade-in-l, .fade-in-r, .timeline-item').forEach(el => obs.observe(el));
+        document.querySelectorAll('.fade-in, .fade-in-l, .fade-in-r').forEach(el => obs.observe(el));
         
-        // Animating progress fills
+        // Progress bars fill
         const pobs = new IntersectionObserver(entries => {
             entries.forEach(e => {
                 if (e.isIntersecting) {
@@ -308,156 +356,42 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     setTimeout(type, 1200);
 
-    /* ── MOUSE SHIFTS & MAGNETIC CALCULATIONS ───────────────── */
-    let currentScrollY = window.scrollY;
-    let interpolatedScrollY = window.scrollY;
-    const lerpFactor = 0.08;
-
-    let mouseX = window.innerWidth / 2;
-    let mouseY = window.innerHeight / 2;
-    let targetGridX = 0;
-    let targetGridY = 0;
-    let currentGridX = 0;
-    let currentGridY = 0;
-
-    window.addEventListener('scroll', () => {
-        currentScrollY = window.scrollY;
-    });
-
-    document.addEventListener('mousemove', e => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-        targetGridX = (mouseX / window.innerWidth - 0.5) * -12;
-        targetGridY = (mouseY / window.innerHeight - 0.5) * -12;
-    });
-
-    const parallaxElems = document.querySelectorAll('[data-parallax]');
-    const projectImages = document.querySelectorAll('.parallax-img');
-    const gridBg = document.querySelector('.grid-bg');
-    
-    function animationLoop() {
-        // Interpolated scroll damping
-        interpolatedScrollY += (currentScrollY - interpolatedScrollY) * lerpFactor;
-        
-        // Large outline text and orb parallax
-        const viewportCenter = window.innerHeight / 2;
-        parallaxElems.forEach(el => {
-            const speed = parseFloat(el.getAttribute('data-speed')) || 0.1;
-            const dir = el.getAttribute('data-parallax-dir') || 'y';
-            const rotate = el.getAttribute('data-rotate') || '0';
-            const parent = el.closest('section') || el.parentElement;
-            const rect = parent.getBoundingClientRect();
-            
-            const parentRelativeTop = rect.top + window.scrollY - interpolatedScrollY;
-            const parentCenter = parentRelativeTop + rect.height / 2;
-            const distanceFromCenter = parentCenter - viewportCenter;
-            const offset = distanceFromCenter * speed;
-            
-            if (dir === 'x') {
-                el.style.transform = `translate3d(${offset}px, 0, 0) rotate(${rotate}deg)`;
-            } else {
-                el.style.transform = `translate3d(0, ${offset}px, 0) rotate(${rotate}deg)`;
+    /* ── DYNAMIC SPOTLIGHT TRACKER (LINEAR / VERCEL STYLE) ─────── */
+    const spotlightCards = document.querySelectorAll('.spotlight-card');
+    document.addEventListener('mousemove', (e) => {
+        spotlightCards.forEach((card) => {
+            const rect = card.getBoundingClientRect();
+            if (rect.bottom >= -50 && rect.top <= window.innerHeight + 50) {
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
             }
         });
+    }, { passive: true });
 
-        // Project images vertical perspective shifting
-        projectImages.forEach(img => {
-            const rect = img.getBoundingClientRect();
-            const viewHeight = window.innerHeight;
-            const percentVisible = (rect.top + rect.height) / (viewHeight + rect.height);
-            const yOffset = (percentVisible - 0.5) * 20;
-            img.style.transform = `scale(1.1) translate3d(0, ${yOffset}px, 0)`;
-        });
-
-        // Grid background shift
-        if (gridBg) {
-            currentGridX += (targetGridX - currentGridX) * 0.08;
-            currentGridY += (targetGridY - currentGridY) * 0.08;
-            gridBg.style.transform = `translate3d(${currentGridX}px, ${currentGridY}px, 0)`;
-        }
-
-        updateMagneticButtons();
-        requestAnimationFrame(animationLoop);
-    }
-    requestAnimationFrame(animationLoop);
-
-    /* ── CARD TILT & GLARE EFFECT ───────────────────────────── */
-    const tiltCards = document.querySelectorAll('.project-card, .skill-card');
-    
+    /* ── 3D CARD PERSPECTIVE MOUSE TILT ──────────────────────── */
+    const tiltCards = document.querySelectorAll('.bento-card, .skill-card');
     tiltCards.forEach(card => {
-        const glare = card.querySelector('.card-glare');
+        const inner = card.querySelector('.card-inner') || card;
         
         card.addEventListener('mousemove', e => {
-            if (window.innerWidth < 768) return; // Disable tilt on mobile
-            
+            if (window.innerWidth < 768) return;
             const rect = card.getBoundingClientRect();
-            const cardX = e.clientX - rect.left;
-            const cardY = e.clientY - rect.top;
+            const x = (e.clientX - rect.left) / rect.width - 0.5;
+            const y = (e.clientY - rect.top) / rect.height - 0.5;
             
-            const x = cardX / rect.width - 0.5;
-            const y = cardY / rect.height - 0.5;
-            
-            const rotateX = -y * 8; // Refined max tilt (8 degrees)
-            const rotateY = x * 8;
-            
-            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px)`;
-            
-            if (glare) {
-                const glareX = (cardX / rect.width) * 100;
-                const glareY = (cardY / rect.height) * 100;
-                card.style.setProperty('--glare-x', `${glareX}%`);
-                card.style.setProperty('--glare-y', `${glareY}%`);
-            }
+            const rotX = -y * 8;
+            const rotY = x * 8;
+            inner.style.transform = `perspective(1000px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateZ(8px)`;
         });
-        
+
         card.addEventListener('mouseleave', () => {
-            card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)';
+            inner.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0px)';
+            inner.style.transition = 'transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1)';
+            setTimeout(() => { inner.style.transition = ''; }, 500);
         });
     });
-
-    /* ── MAGNETIC ATTRACTION ON BUTTONS ──────────────────────── */
-    const magneticBtns = document.querySelectorAll('.btn-primary, .btn-ghost, #hamburger');
-    const magIntensity = 0.25; // Subtler snap intensity
-    const magRadius = 45; 
-
-    const buttonStates = new Map();
-    magneticBtns.forEach(btn => {
-        buttonStates.set(btn, { x: 0, y: 0 });
-    });
-
-    function updateMagneticButtons() {
-        if (window.innerWidth < 1024) {
-            magneticBtns.forEach(btn => btn.style.transform = '');
-            return;
-        }
-
-        magneticBtns.forEach(btn => {
-            const state = buttonStates.get(btn);
-            if (!state) return;
-
-            const rect = btn.getBoundingClientRect();
-            const btnCenterX = rect.left + rect.width / 2;
-            const btnCenterY = rect.top + rect.height / 2;
-
-            const dx = mouseX - btnCenterX;
-            const dy = mouseY - btnCenterY;
-            const distance = Math.hypot(dx, dy);
-
-            let targetX = 0;
-            let targetY = 0;
-
-            if (distance < magRadius) {
-                const pullPower = (magRadius - distance) / magRadius;
-                targetX = dx * pullPower * magIntensity;
-                targetY = dy * pullPower * magIntensity;
-            }
-
-            state.x += (targetX - state.x) * 0.12;
-            state.y += (targetY - state.y) * 0.12;
-
-            btn.style.transform = `translate3d(${state.x}px, ${state.y}px, 0)`;
-        });
-    }
 
     /* ── HERO 3D MOUSE PARALLAX ──────────────────────────────── */
     const heroSection = document.getElementById('home');
@@ -472,22 +406,18 @@ document.addEventListener("DOMContentLoaded", function () {
     if (heroSection && heroImageSide) {
         heroSection.addEventListener('mousemove', e => {
             if (window.innerWidth < 1024) return;
-            
             const rect = heroSection.getBoundingClientRect();
             const x = (e.clientX - rect.left) / rect.width - 0.5;
             const y = (e.clientY - rect.top) / rect.height - 0.5;
             
-            const rotateX = -y * 8; // Refined tilt angles
-            const rotateY = x * 8;
-            heroImageSide.style.transform = `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-            
+            heroImageSide.style.transform = `perspective(1200px) rotateX(${-y * 8}deg) rotateY(${x * 8}deg)`;
             if (mainFrame) mainFrame.style.transform = `translateZ(20px) translate3d(${x * 8}px, ${y * 8}px, 0)`;
             if (badgeTop) badgeTop.style.transform = `translateZ(50px) translate3d(${x * 20}px, ${y * 20}px, 0) translateX(10px) translateY(-5px)`;
             if (badgeBottom) badgeBottom.style.transform = `translateZ(40px) translate3d(${x * 16}px, ${y * 16}px, 0) translateX(-10px) translateY(5px)`;
             if (ft1) ft1.style.transform = `translateZ(60px) translate3d(${x * -25}px, ${y * -25}px, 0) rotate(-10deg)`;
             if (ft2) ft2.style.transform = `translateZ(80px) translate3d(${x * -32}px, ${y * -32}px, 0) rotate(15deg)`;
             if (ft3) ft3.style.transform = `translateZ(50px) translate3d(${x * -20}px, ${y * -20}px, 0) rotate(5deg)`;
-        });
+        }, { passive: true });
         
         heroSection.addEventListener('mouseleave', () => {
             heroImageSide.style.transform = 'perspective(1200px) rotateX(0deg) rotateY(0deg)';
@@ -500,35 +430,177 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    /* ── THREE.JS BACKGROUND PARTICLES ───────────────────────── */
+    /* ── GSAP & SCROLLTRIGGER 3D PARALLAX SUITE ──────────────── */
+    function initGSAPScrollAnimations() {
+        if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+
+        // 3D Card Scroll Perspective Unfolding
+        const scrollCards = gsap.utils.toArray('.project-card, .skill-card, .cert-card');
+        scrollCards.forEach((card, idx) => {
+            const isAlt = idx % 2 === 0;
+            gsap.fromTo(card,
+                {
+                    opacity: 0,
+                    y: 65,
+                    rotationX: 15,
+                    rotationY: isAlt ? -5 : 5,
+                    scale: 0.93,
+                    transformPerspective: 1200
+                },
+                {
+                    opacity: 1,
+                    y: 0,
+                    rotationX: 0,
+                    rotationY: 0,
+                    scale: 1,
+                    duration: 1.0,
+                    ease: 'power3.out',
+                    scrollTrigger: {
+                        trigger: card,
+                        start: 'top 92%',
+                        end: 'top 55%',
+                        scrub: 1.1,
+                        toggleActions: 'play none none reverse'
+                    }
+                }
+            );
+        });
+
+        // Kinetic Parallax Architectural Typography
+        gsap.utils.toArray('.bg-text-parallax').forEach((el) => {
+            const speed = parseFloat(el.getAttribute('data-speed')) || 0.15;
+            const dir = el.getAttribute('data-parallax-dir') || 'x';
+            const distance = (dir === 'x' ? 240 : 160) * (speed > 0 ? 1 : -1);
+
+            gsap.to(el, {
+                [dir]: distance,
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: el.closest('section') || el.parentElement,
+                    start: 'top bottom',
+                    end: 'bottom top',
+                    scrub: 1.2
+                }
+            });
+        });
+
+        // Hero Image 3D Receding Parallax on Scroll Exit
+        gsap.to('.hero-image-side', {
+            y: 90,
+            rotationX: -14,
+            scale: 0.93,
+            opacity: 0.8,
+            ease: 'none',
+            scrollTrigger: {
+                trigger: '#home',
+                start: 'top top',
+                end: 'bottom top',
+                scrub: 1
+            }
+        });
+
+        // Section Headers Stagger Reveal
+        gsap.utils.toArray('.section-header').forEach((hdr) => {
+            gsap.fromTo(hdr,
+                { opacity: 0, y: 35 },
+                {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.8,
+                    ease: 'power3.out',
+                    scrollTrigger: {
+                        trigger: hdr,
+                        start: 'top 88%',
+                        toggleActions: 'play none none reverse'
+                    }
+                }
+            );
+        });
+
+        // Timeline Progress Items Stagger Reveal
+        gsap.utils.toArray('.timeline-item').forEach((item) => {
+            gsap.fromTo(item,
+                { opacity: 0, x: -35 },
+                {
+                    opacity: 1,
+                    x: 0,
+                    duration: 0.85,
+                    ease: 'power2.out',
+                    scrollTrigger: {
+                        trigger: item,
+                        start: 'top 85%',
+                        toggleActions: 'play none none reverse'
+                    }
+                }
+            );
+        });
+    }
+
+    /* ── THREE.JS 3D PERSISTENT COSMIC DEPTH WORLD ───────────── */
     const canvas = document.getElementById('three-canvas');
     if (canvas && typeof THREE !== 'undefined') {
         const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 24;
+
         const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
-        
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-        const geometry = new THREE.BufferGeometry();
-        const particlesCount = 700; // Subtler particle count
+        // Spatial Node Particles
+        const particlesCount = 950;
         const posArray = new Float32Array(particlesCount * 3);
-        
-        for(let i = 0; i < particlesCount * 3; i++) {
-            posArray[i] = (Math.random() - 0.5) * 80;
+        const colorArray = new Float32Array(particlesCount * 3);
+
+        const colorIndigo = new THREE.Color(0x5b7fff);
+        const colorCyan = new THREE.Color(0x00f0ff);
+
+        for (let i = 0; i < particlesCount; i++) {
+            const i3 = i * 3;
+            const radius = 12 + Math.random() * 45;
+            const theta = Math.random() * Math.PI * 2;
+            posArray[i3] = Math.cos(theta) * radius;
+            posArray[i3 + 1] = (Math.random() - 0.5) * 80;
+            posArray[i3 + 2] = (Math.random() - 0.5) * 65;
+
+            const chosen = Math.random() > 0.4 ? colorCyan : colorIndigo;
+            colorArray[i3] = chosen.r;
+            colorArray[i3 + 1] = chosen.g;
+            colorArray[i3 + 2] = chosen.b;
         }
-        
+
+        const geometry = new THREE.BufferGeometry();
         geometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        geometry.setAttribute('color', new THREE.BufferAttribute(colorArray, 3));
+
         const material = new THREE.PointsMaterial({
-            size: 0.07,
-            color: 0x00e5c3,
+            size: 0.08,
+            vertexColors: true,
             transparent: true,
-            opacity: 0.6,
+            opacity: 0.65,
             blending: THREE.AdditiveBlending
         });
-        
+
         const particlesMesh = new THREE.Points(geometry, material);
         scene.add(particlesMesh);
+
+        // Ambient Wireframe Torus
+        const torusGeo = new THREE.TorusGeometry(8, 2.2, 16, 60);
+        const torusMat = new THREE.MeshBasicMaterial({
+            color: 0x5b7fff,
+            wireframe: true,
+            transparent: true,
+            opacity: 0.04
+        });
+        const torusMesh = new THREE.Mesh(torusGeo, torusMat);
+        torusMesh.position.set(14, -5, -8);
+        scene.add(torusMesh);
+
+        let scrollProgress = 0;
+        let targetCamZ = 24;
+        let targetCamY = 0;
+        let targetMouseX = 0;
+        let targetMouseY = 0;
 
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
@@ -536,25 +608,41 @@ document.addEventListener("DOMContentLoaded", function () {
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        window.dispatchEvent(new Event('resize'));
+        document.addEventListener('mousemove', (e) => {
+            targetMouseX = (e.clientX / window.innerWidth - 0.5) * 3;
+            targetMouseY = (e.clientY / window.innerHeight - 0.5) * 3;
+        }, { passive: true });
+
+        if (lenis) {
+            lenis.on('scroll', (e) => {
+                scrollProgress = e.progress || 0;
+            });
+        } else {
+            window.addEventListener('scroll', () => {
+                const max = document.documentElement.scrollHeight - window.innerHeight;
+                scrollProgress = max > 0 ? window.scrollY / max : 0;
+            }, { passive: true });
+        }
+
         const clock = new THREE.Clock();
-        
+
         function animate3D() {
             requestAnimationFrame(animate3D);
             const elapsedTime = clock.getElapsedTime();
 
-            particlesMesh.rotation.y = elapsedTime * 0.04;
-            const scrollInfluence = (typeof interpolatedScrollY !== 'undefined' ? interpolatedScrollY : window.scrollY) * 0.0008;
-            particlesMesh.rotation.x = scrollInfluence * 0.4;
-            
-            const mouseXInfluence = (typeof mouseX !== 'undefined' ? (mouseX / window.innerWidth - 0.5) : 0) * 4;
-            const mouseYInfluence = (typeof mouseY !== 'undefined' ? (mouseY / window.innerHeight - 0.5) : 0) * 4;
-            
-            const targetX = mouseXInfluence;
-            const targetY = (scrollInfluence * 5) - mouseYInfluence;
+            particlesMesh.rotation.y = elapsedTime * 0.03 + scrollProgress * Math.PI * 0.8;
+            particlesMesh.rotation.x = scrollProgress * 0.4;
 
-            particlesMesh.position.x += (targetX - particlesMesh.position.x) * 0.05;
-            particlesMesh.position.y += (targetY - particlesMesh.position.y) * 0.05;
+            torusMesh.rotation.x = elapsedTime * 0.04 + scrollProgress * 1.8;
+            torusMesh.rotation.y = elapsedTime * 0.03;
+
+            targetCamZ = 24 - scrollProgress * 14;
+            targetCamY = -scrollProgress * 12 - targetMouseY;
+            const targetCamX = targetMouseX;
+
+            camera.position.z += (targetCamZ - camera.position.z) * 0.05;
+            camera.position.y += (targetCamY - camera.position.y) * 0.05;
+            camera.position.x += (targetCamX - camera.position.x) * 0.05;
 
             renderer.render(scene, camera);
         }
