@@ -7,11 +7,16 @@
     <link rel="icon" type="image/png" href="asset/icon.png">
 
     <meta name="description" content="Portfolio EL Zidane Ardyansyah — Web Developer, Mobile Developer & UI/UX Designer dari Malang. Spesialis Next.js, Flutter, dan Supabase.">
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+    <!-- 3D PERSISTENT WEBGL CANVAS -->
+    <canvas id="three-canvas"></canvas>
 
     <!-- SCROLL PROGRESS -->
     <div id="scroll-progress"></div>
@@ -58,9 +63,6 @@
 
     <!-- ─── HERO ──────────────────────────────────────────────── -->
     <section id="home">
-        <!-- 3D Canvas -->
-        <canvas id="three-canvas"></canvas>
-
         <!-- Parallax Background Typography -->
         <div class="bg-text-parallax" data-parallax data-parallax-dir="x" data-speed="-0.15" data-rotate="-4" style="top: 15%; left: 5%;">CREATIVE</div>
         <div class="bg-text-parallax" data-parallax data-parallax-dir="x" data-speed="0.2" data-rotate="2" style="bottom: 10%; right: 5%; -webkit-text-stroke: 1px rgba(0, 229, 195, 0.02); text-stroke: 1px rgba(0, 229, 195, 0.02);">DEVELOPER</div>
@@ -193,7 +195,7 @@
                                 <div class="gh-stat-val" id="gh-repos">—</div>
                                 <div class="gh-stat-label">Repos</div>
                             </div>
-                            <div class="gh-stat-item">
+                            <div class="gh-stat-item">8
                                 <div class="gh-stat-val" id="gh-stars">—</div>
                                 <div class="gh-stat-label">Stars</div>
                             </div>
@@ -254,179 +256,261 @@
                 <p class="section-sub">Pameran karya dan proyek terbaru saya di berbagai domain teknologi.</p>
                 <div class="divider"></div>
             </div>
-            <div class="projects-grid">
-                <!-- Card 1 — EazyChise -->
-                <div class="project-card tilt-card fade-in" style="transition-delay:0.1s" data-modal-id="0">
-                    <div class="card-glare"></div>
-                    <div class="project-img">
-                        <img src="asset/eazychise.png" alt="EazyChise" class="parallax-img">
-                        <div class="project-img-overlay">
-                            <a href="https://eazychise.vercel.app" target="_blank" rel="noopener noreferrer" class="project-link-btn"><i class="fas fa-external-link-alt"></i></a>
+            <div class="projects-bento-grid">
+                <!-- Card 1 — EazyChise (Featured Flagship) -->
+                <div class="project-card spotlight-card bento-card bento-featured" data-3d-scroll data-modal-id="0">
+                    <div class="card-spotlight-border"></div>
+                    <div class="card-inner">
+                        <div class="project-img-frame">
+                            <img src="asset/eazychise.png" alt="EazyChise Marketplace" class="parallax-img">
+                            <div class="project-img-overlay">
+                                <a href="https://eazychise.vercel.app" target="_blank" rel="noopener noreferrer" class="project-link-btn" title="Kunjungi Live Demo"><i class="fas fa-external-link-alt"></i></a>
+                                <button class="project-link-btn btn-view-modal" title="Detail Proyek"><i class="fas fa-search-plus"></i></button>
+                            </div>
+                            <div class="project-badges-top">
+                                <span class="badge-tag web"><i class="fas fa-globe"></i> WEB</span>
+                                <span class="badge-status live"><span class="badge-pulse"></span> LIVE APP</span>
+                            </div>
                         </div>
-                        <div class="project-tag">WEB</div>
-                    </div>
-                    <div class="project-body">
-                        <h3>EazyChise</h3>
-                        <p>Platform marketplace waralaba responsif dengan autentikasi, pencarian multi-kategori, dan kalkulator simulasi keuntungan bisnis.</p>
-                        <div class="tech-pills">
-                            <span class="tech-pill">Next.js</span>
-                            <span class="tech-pill">TypeScript</span>
-                            <span class="tech-pill">Supabase</span>
-                            <span class="tech-pill">Vercel</span>
-                        </div>
-                    </div>
-                </div>
-                <!-- Card 2 — Monsef -->
-                <div class="project-card tilt-card fade-in" style="transition-delay:0.2s" data-modal-id="1">
-                    <div class="card-glare"></div>
-                    <div class="project-img">
-                        <img src="asset/monsef.png" alt="Monsef" class="parallax-img">
-                        <div class="project-img-overlay">
-                            <a href="https://monsef.vercel.app" target="_blank" class="project-link-btn"><i class="fas fa-external-link-alt"></i></a>
-                        </div>
-                        <div class="project-tag">MOBILE</div>
-                    </div>
-                    <div class="project-body">
-                        <h3>Monsef — Pencatat Keuangan</h3>
-                        <p>Aplikasi keuangan mobile dengan scan struk (OCR), Speech-to-Text, dan sinkronisasi cloud real-time via Supabase.</p>
-                        <div class="tech-pills">
-                            <span class="tech-pill">Flutter</span>
-                            <span class="tech-pill">Dart</span>
-                            <span class="tech-pill">Supabase</span>
-                            <span class="tech-pill">OCR API</span>
+                        <div class="project-body">
+                            <div class="project-heading-row">
+                                <h3>EazyChise</h3>
+                                <span class="project-year">2026</span>
+                            </div>
+                            <p>Platform marketplace waralaba responsif dengan autentikasi multi-user, pencarian multi-kategori cerdas, dan kalkulator simulasi ROI bisnis.</p>
+                            <div class="tech-pills">
+                                <span class="tech-pill"><i class="fab fa-react"></i> Next.js</span>
+                                <span class="tech-pill">TypeScript</span>
+                                <span class="tech-pill"><i class="fas fa-database"></i> Supabase</span>
+                                <span class="tech-pill">Tailwind CSS</span>
+                                <span class="tech-pill">Vercel</span>
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Card 2 — Monsef (Flagship Mobile) -->
+                <div class="project-card spotlight-card bento-card bento-highlight" data-3d-scroll data-modal-id="1">
+                    <div class="card-spotlight-border"></div>
+                    <div class="card-inner">
+                        <div class="project-img-frame">
+                            <img src="asset/monsef.png" alt="Monsef Pencatat Keuangan" class="parallax-img">
+                            <div class="project-img-overlay">
+                                <a href="https://monsef.vercel.app" target="_blank" class="project-link-btn" title="Kunjungi Live Demo"><i class="fas fa-external-link-alt"></i></a>
+                                <button class="project-link-btn btn-view-modal" title="Detail Proyek"><i class="fas fa-search-plus"></i></button>
+                            </div>
+                            <div class="project-badges-top">
+                                <span class="badge-tag mobile"><i class="fas fa-mobile-alt"></i> MOBILE</span>
+                                <span class="badge-status ai"><i class="fas fa-brain"></i> AI OCR</span>
+                            </div>
+                        </div>
+                        <div class="project-body">
+                            <div class="project-heading-row">
+                                <h3>Monsef — Pencatat Keuangan</h3>
+                                <span class="project-year">2026</span>
+                            </div>
+                            <p>Aplikasi mobile multi-platform dengan scanner struk otomatis OCR, input transaksi suara (Speech-to-Text), dan sinkronisasi real-time cloud.</p>
+                            <div class="tech-pills">
+                                <span class="tech-pill">Flutter</span>
+                                <span class="tech-pill">Dart</span>
+                                <span class="tech-pill">OCR Engine</span>
+                                <span class="tech-pill">Supabase</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Card 3 — HaloAir -->
-                <div class="project-card tilt-card fade-in" style="transition-delay:0.3s" data-modal-id="2">
-                    <div class="card-glare"></div>
-                    <div class="project-img">
-                        <img src="asset/HaloAir.png" alt="HaloAir" class="parallax-img">
-                        <div class="project-img-overlay">
-                            <a href="#" target="_blank" class="project-link-btn"><i class="fas fa-external-link-alt"></i></a>
+                <div class="project-card spotlight-card bento-card" data-3d-scroll data-modal-id="2">
+                    <div class="card-spotlight-border"></div>
+                    <div class="card-inner">
+                        <div class="project-img-frame">
+                            <img src="asset/HaloAir.png" alt="HaloAir PDAM" class="parallax-img">
+                            <div class="project-img-overlay">
+                                <button class="project-link-btn btn-view-modal" title="Detail Proyek"><i class="fas fa-search-plus"></i></button>
+                            </div>
+                            <div class="project-badges-top">
+                                <span class="badge-tag mobile"><i class="fas fa-mobile-alt"></i> MOBILE</span>
+                            </div>
                         </div>
-                        <div class="project-tag">MOBILE</div>
-                    </div>
-                    <div class="project-body">
-                        <h3>HaloAir — Manajemen PDAM</h3>
-                        <p>Aplikasi manajemen PDAM multi-role (Admin &amp; User) dengan sinkronisasi data tagihan real-time via RESTful API.</p>
-                        <div class="tech-pills">
-                            <span class="tech-pill">Flutter</span>
-                            <span class="tech-pill">Dart</span>
-                            <span class="tech-pill">REST API</span>
+                        <div class="project-body">
+                            <div class="project-heading-row">
+                                <h3>HaloAir — Manajemen PDAM</h3>
+                                <span class="project-year">2026</span>
+                            </div>
+                            <p>Aplikasi mobile multi-role (Admin &amp; User) dengan sinkronisasi tagihan real-time via RESTful API.</p>
+                            <div class="tech-pills">
+                                <span class="tech-pill">Flutter</span>
+                                <span class="tech-pill">Dart</span>
+                                <span class="tech-pill">REST API</span>
+                            </div>
                         </div>
                     </div>
                 </div>
+
                 <!-- Card 4 — PortaTrip -->
-                <div class="project-card tilt-card fade-in" style="transition-delay:0.4s" data-modal-id="3">
-                    <div class="card-glare"></div>
-                    <div class="project-img">
-                        <img src="asset/portatrip.png" alt="PortaTrip" class="parallax-img">
-                        <div class="project-img-overlay">
-                            <a href="#" target="_blank" class="project-link-btn"><i class="fas fa-external-link-alt"></i></a>
+                <div class="project-card spotlight-card bento-card" data-3d-scroll data-modal-id="3">
+                    <div class="card-spotlight-border"></div>
+                    <div class="card-inner">
+                        <div class="project-img-frame">
+                            <img src="asset/portatrip.png" alt="PortaTrip UI/UX Design" class="parallax-img">
+                            <div class="project-img-overlay">
+                                <button class="project-link-btn btn-view-modal" title="Detail Proyek"><i class="fas fa-search-plus"></i></button>
+                            </div>
+                            <div class="project-badges-top">
+                                <span class="badge-tag uiux"><i class="fas fa-bezier-curve"></i> UI/UX</span>
+                            </div>
                         </div>
-                        <div class="project-tag">UI/UX</div>
-                    </div>
-                    <div class="project-body">
-                        <h3>PortaTrip — UI/UX Design</h3>
-                        <p>Desain UI/UX platform wisata dan pemesanan porter guide — dari user flow, wireframe hingga interactive prototype di Figma.</p>
-                        <div class="tech-pills">
-                            <span class="tech-pill">Figma</span>
-                            <span class="tech-pill">Whimsical</span>
-                            <span class="tech-pill">Prototyping</span>
+                        <div class="project-body">
+                            <div class="project-heading-row">
+                                <h3>PortaTrip — UI/UX Design</h3>
+                                <span class="project-year">2025</span>
+                            </div>
+                            <p>Desain platform pemesanan porter guide wisata — user flow, wireframe hingga high-fidelity interactive prototype di Figma.</p>
+                            <div class="tech-pills">
+                                <span class="tech-pill">Figma</span>
+                                <span class="tech-pill">Whimsical</span>
+                                <span class="tech-pill">Prototyping</span>
+                            </div>
                         </div>
                     </div>
                 </div>
+
                 <!-- Card 5 — Web Visit SMK Telkom Malang -->
-                <div class="project-card tilt-card fade-in" style="transition-delay:0.5s" data-modal-id="4">
-                    <div class="card-glare"></div>
-                    <div class="project-img">
-                        <img src="asset/webvisit.png" alt="Web Visit SMK Telkom Malang" class="parallax-img">
-                        <div class="project-img-overlay">
-                            <a href="https://mokletvisit.vercel.app" target="_blank" rel="noopener noreferrer" class="project-link-btn"><i class="fas fa-external-link-alt"></i></a>
+                <div class="project-card spotlight-card bento-card" data-3d-scroll data-modal-id="4">
+                    <div class="card-spotlight-border"></div>
+                    <div class="card-inner">
+                        <div class="project-img-frame">
+                            <img src="asset/webvisit.png" alt="Web Visit SMK Telkom Malang" class="parallax-img">
+                            <div class="project-img-overlay">
+                                <a href="https://mokletvisit.vercel.app" target="_blank" rel="noopener noreferrer" class="project-link-btn"><i class="fas fa-external-link-alt"></i></a>
+                                <button class="project-link-btn btn-view-modal" title="Detail Proyek"><i class="fas fa-search-plus"></i></button>
+                            </div>
+                            <div class="project-badges-top">
+                                <span class="badge-tag web"><i class="fas fa-globe"></i> WEB</span>
+                            </div>
                         </div>
-                        <div class="project-tag">WEB</div>
-                    </div>
-                    <div class="project-body">
-                        <h3>Web Visit SMK Telkom Malang</h3>
-                        <p>Website resmi kunjungan untuk SMK Telkom Malang.</p>
-                        <div class="tech-pills">
-                            <span class="tech-pill">Web</span>
-                            <span class="tech-pill">HTML/CSS</span>
+                        <div class="project-body">
+                            <div class="project-heading-row">
+                                <h3>Web Visit SMK Telkom</h3>
+                                <span class="project-year">2025</span>
+                            </div>
+                            <p>Website resmi kunjungan SMK Telkom Malang dengan sistem pendataan pengunjung terstruktur.</p>
+                            <div class="tech-pills">
+                                <span class="tech-pill">HTML5</span>
+                                <span class="tech-pill">CSS3</span>
+                                <span class="tech-pill">JavaScript</span>
+                            </div>
                         </div>
                     </div>
                 </div>
+
                 <!-- Card 6 — Aplikasi Mobile Eazychise -->
-                <div class="project-card tilt-card fade-in" style="transition-delay:0.6s" data-modal-id="5">
-                    <div class="card-glare"></div>
-                    <div class="project-img">
-                        <img src="asset/monsef.png" alt="Aplikasi Mobile Eazychise" class="parallax-img">
-                        <div class="project-img-overlay">
-                            <a href="" target="_blank" class="project-link-btn"><i class="fas fa-external-link-alt"></i></a>
+                <div class="project-card spotlight-card bento-card" data-3d-scroll data-modal-id="5">
+                    <div class="card-spotlight-border"></div>
+                    <div class="card-inner">
+                        <div class="project-img-frame">
+                            <img src="asset/monsef.png" alt="Aplikasi Mobile Eazychise" class="parallax-img">
+                            <div class="project-img-overlay">
+                                <button class="project-link-btn btn-view-modal" title="Detail Proyek"><i class="fas fa-search-plus"></i></button>
+                            </div>
+                            <div class="project-badges-top">
+                                <span class="badge-tag mobile"><i class="fas fa-mobile-alt"></i> MOBILE</span>
+                            </div>
                         </div>
-                        <div class="project-tag">MOBILE</div>
-                    </div>
-                    <div class="project-body">
-                        <h3>Aplikasi Mobile Eazychise</h3>
-                        <p>Platform marketplace waralaba versi mobile.</p>
-                        <div class="tech-pills">
-                            <span class="tech-pill">Flutter</span>
-                            <span class="tech-pill">Mobile</span>
+                        <div class="project-body">
+                            <div class="project-heading-row">
+                                <h3>Mobile Eazychise</h3>
+                                <span class="project-year">2026</span>
+                            </div>
+                            <p>Platform marketplace franchise versi native mobile untuk eksplorasi dan transaksi bisnis cepat.</p>
+                            <div class="tech-pills">
+                                <span class="tech-pill">Flutter</span>
+                                <span class="tech-pill">Dart</span>
+                                <span class="tech-pill">Mobile UI</span>
+                            </div>
                         </div>
                     </div>
                 </div>
+
                 <!-- Card 7 — Aplikasi Toko Online -->
-                <div class="project-card tilt-card fade-in" style="transition-delay:0.7s" data-modal-id="6">
-                    <div class="card-glare"></div>
-                    <div class="project-img">
-                        <img src="asset/foto123.png" alt="Aplikasi Toko Online" class="parallax-img">
-                        <div class="project-img-overlay">
-                            <a href="#" target="_blank" class="project-link-btn"><i class="fas fa-external-link-alt"></i></a>
+                <div class="project-card spotlight-card bento-card" data-3d-scroll data-modal-id="6">
+                    <div class="card-spotlight-border"></div>
+                    <div class="card-inner">
+                        <div class="project-img-frame">
+                            <img src="asset/foto123.png" alt="Aplikasi Toko Online" class="parallax-img">
+                            <div class="project-img-overlay">
+                                <button class="project-link-btn btn-view-modal" title="Detail Proyek"><i class="fas fa-search-plus"></i></button>
+                            </div>
+                            <div class="project-badges-top">
+                                <span class="badge-tag web"><i class="fas fa-shopping-cart"></i> E-COMMERCE</span>
+                            </div>
                         </div>
-                        <div class="project-tag">WEB/MOBILE</div>
-                    </div>
-                    <div class="project-body">
-                        <h3>Aplikasi Toko Online</h3>
-                        <p>Aplikasi toko online untuk transaksi digital.</p>
-                        <div class="tech-pills">
-                            <span class="tech-pill">E-Commerce</span>
+                        <div class="project-body">
+                            <div class="project-heading-row">
+                                <h3>Toko Online Fullstack</h3>
+                                <span class="project-year">2024</span>
+                            </div>
+                            <p>Aplikasi toko online komprehensif untuk katalog produk dan checkout digital yang mulus.</p>
+                            <div class="tech-pills">
+                                <span class="tech-pill">Fullstack</span>
+                                <span class="tech-pill">REST API</span>
+                            </div>
                         </div>
                     </div>
                 </div>
+
                 <!-- Card 8 — Aplikasi EcoGuard -->
-                <div class="project-card tilt-card fade-in" style="transition-delay:0.8s" data-modal-id="7">
-                    <div class="card-glare"></div>
-                    <div class="project-img">
-                        <img src="asset/ecoguard.png" alt="Aplikasi EcoGuard" class="parallax-img">
-                        <div class="project-img-overlay">
-                            <a href="#" target="_blank" class="project-link-btn"><i class="fas fa-external-link-alt"></i></a>
+                <div class="project-card spotlight-card bento-card" data-3d-scroll data-modal-id="7">
+                    <div class="card-spotlight-border"></div>
+                    <div class="card-inner">
+                        <div class="project-img-frame">
+                            <img src="asset/ecoguard.png" alt="Aplikasi EcoGuard" class="parallax-img">
+                            <div class="project-img-overlay">
+                                <button class="project-link-btn btn-view-modal" title="Detail Proyek"><i class="fas fa-search-plus"></i></button>
+                            </div>
+                            <div class="project-badges-top">
+                                <span class="badge-tag app"><i class="fas fa-leaf"></i> ECO</span>
+                            </div>
                         </div>
-                        <div class="project-tag">APP</div>
-                    </div>
-                    <div class="project-body">
-                        <h3>Aplikasi EcoGuard</h3>
-                        <p>Aplikasi peduli lingkungan EcoGuard.</p>
-                        <div class="tech-pills">
-                            <span class="tech-pill">Environment</span>
+                        <div class="project-body">
+                            <div class="project-heading-row">
+                                <h3>Aplikasi EcoGuard</h3>
+                                <span class="project-year">2025</span>
+                            </div>
+                            <p>Aplikasi peduli lingkungan dengan fitur edukasi masyarakat dan gamifikasi aksi hijau berkelanjutan.</p>
+                            <div class="tech-pills">
+                                <span class="tech-pill">Environment</span>
+                                <span class="tech-pill">Gamification</span>
+                            </div>
                         </div>
                     </div>
                 </div>
+
                 <!-- Card 9 — Website Mokleters -->
-                <div class="project-card tilt-card fade-in" style="transition-delay:0.9s" data-modal-id="8">
-                    <div class="card-glare"></div>
-                    <div class="project-img">
-                        <img src="asset/mokleters.png" alt="Website Mokleters" class="parallax-img">
-                        <div class="project-img-overlay">
-                            <a href="https://mokleters.com" target="_blank" class="project-link-btn"><i class="fas fa-external-link-alt"></i></a>
+                <div class="project-card spotlight-card bento-card" data-3d-scroll data-modal-id="8">
+                    <div class="card-spotlight-border"></div>
+                    <div class="card-inner">
+                        <div class="project-img-frame">
+                            <img src="asset/mokleters.png" alt="Website Mokleters" class="parallax-img">
+                            <div class="project-img-overlay">
+                                <a href="https://mokleters.com" target="_blank" class="project-link-btn"><i class="fas fa-external-link-alt"></i></a>
+                                <button class="project-link-btn btn-view-modal" title="Detail Proyek"><i class="fas fa-search-plus"></i></button>
+                            </div>
+                            <div class="project-badges-top">
+                                <span class="badge-tag web"><i class="fas fa-users"></i> COMMUNITY</span>
+                            </div>
                         </div>
-                        <div class="project-tag">WEB</div>
-                    </div>
-                    <div class="project-body">
-                        <h3>Website Mokleters</h3>
-                        <p>Website untuk komunitas Mokleters.</p>
-                        <div class="tech-pills">
-                            <span class="tech-pill">Web</span>
-                            <span class="tech-pill">Community</span>
+                        <div class="project-body">
+                            <div class="project-heading-row">
+                                <h3>Website Mokleters</h3>
+                                <span class="project-year">2024</span>
+                            </div>
+                            <p>Portal interaktif komunitas Mokleters dengan informasi agenda, event, dan ruang temu virtual.</p>
+                            <div class="tech-pills">
+                                <span class="tech-pill">Web Community</span>
+                                <span class="tech-pill">Interactive</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -937,6 +1021,9 @@
     </div>
 
     <!-- ─── LIBRARIES & SCRIPTS ────────────────────────────────── -->
+    <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
