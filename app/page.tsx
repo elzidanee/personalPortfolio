@@ -1,5 +1,10 @@
 import React from "react";
 import PortfolioClient from "@/components/PortfolioClient";
+import { LampContainer } from "@/components/ui/lamp";
+import { ContainerScroll } from "@/components/ui/container-scroll-animation";
+import { BorderBeam } from "@/components/ui/border-beam";
+import { TracingBeam } from "@/components/ui/tracing-beam";
+import { ScrollVelocity } from "@/components/ui/scroll-velocity";
 
 export default function Home() {
   return (
@@ -109,7 +114,8 @@ export default function Home() {
       </nav>
 
       {/* ─── HERO ──────────────────────────────────────────────── */}
-      <section id="home">
+      <section id="home" className="relative overflow-hidden">
+        <LampContainer className="absolute -top-28 left-0 right-0 h-[480px] -z-1 opacity-70 pointer-events-none" />
         <div className="hero-ambient-glow"></div>
         <div className="hero-inner">
           <div className="hero-left">
@@ -190,6 +196,52 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* ─── 3D CONTAINER SCROLL SHOWCASE (21ST.DEV) ──────────── */}
+      <div className="w-full max-w-7xl mx-auto px-4 -mt-12 md:-mt-8">
+        <ContainerScroll
+          titleComponent={
+            <div className="mb-4">
+              <span className="hero-tag mb-4 inline-flex">
+                <span className="hero-tag-dot"></span>
+                PREVIEW SHOWCASE
+              </span>
+              <h2 className="text-2xl md:text-5xl font-extrabold text-white tracking-tight">
+                Membangun Arsitektur Web &amp; Mobile
+                <br />
+                <span className="line-accent">Interaktif &amp; Skalabilitas Nyata</span>
+              </h2>
+            </div>
+          }
+        >
+          <div className="relative w-full h-full flex flex-col justify-between overflow-hidden bg-[#0e111a] rounded-xl border border-white/10">
+            <div className="flex items-center gap-2 px-4 py-3 bg-[#141724] border-b border-white/10">
+              <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
+              <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+              <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
+              <span className="ml-2 text-xs font-mono text-slate-400 bg-black/40 px-3 py-1 rounded-full border border-white/5">
+                https://eazychise.vercel.app — EazyChise Platform
+              </span>
+            </div>
+            <div className="relative flex-1 overflow-hidden">
+              <img
+                src="/asset/eazychise.png"
+                alt="EazyChise Showcase"
+                className="w-full h-full object-cover object-top"
+              />
+            </div>
+          </div>
+        </ContainerScroll>
+      </div>
+
+      {/* ─── SCROLL VELOCITY MARQUEE (21ST.DEV) ────────────────── */}
+      <ScrollVelocity
+        texts={[
+          "FULLSTACK DEVELOPER • FLUTTER MOBILE • UI/UX DESIGNER",
+          "NEXT.JS • SUPABASE • TYPESCRIPT • TAILWIND CSS • FIGMA",
+        ]}
+        velocity={2.5}
+      />
 
       {/* ─── ABOUT ─────────────────────────────────────────────── */}
       <section id="about" style={{ position: "relative", overflow: "hidden" }}>
@@ -452,10 +504,11 @@ export default function Home() {
           <div className="projects-bento-grid">
             {/* Card 1 — EazyChise (Featured Flagship) */}
             <div
-              className="project-card spotlight-card bento-card bento-featured"
+              className="project-card spotlight-card bento-card bento-featured relative overflow-hidden"
               data-3d-scroll
               data-modal-id="0"
             >
+              <BorderBeam size={300} duration={12} delay={0} colorFrom="#38bdf8" colorTo="#3b82f6" />
               <div className="card-spotlight-border"></div>
               <div className="card-inner">
                 <div className="project-img-frame">
@@ -518,10 +571,11 @@ export default function Home() {
 
             {/* Card 2 — Monsef (Flagship Mobile) */}
             <div
-              className="project-card spotlight-card bento-card bento-highlight"
+              className="project-card spotlight-card bento-card bento-highlight relative overflow-hidden"
               data-3d-scroll
               data-modal-id="1"
             >
+              <BorderBeam size={300} duration={14} delay={5} colorFrom="#c084fc" colorTo="#06b6d4" />
               <div className="card-spotlight-border"></div>
               <div className="card-inner">
                 <div className="project-img-frame">
@@ -579,10 +633,11 @@ export default function Home() {
 
             {/* Card 3 — HaloAir */}
             <div
-              className="project-card spotlight-card bento-card"
+              className="project-card spotlight-card bento-card relative overflow-hidden"
               data-3d-scroll
               data-modal-id="2"
             >
+              <BorderBeam size={260} duration={16} delay={8} colorFrom="#00e5c3" colorTo="#3b82f6" />
               <div className="card-spotlight-border"></div>
               <div className="card-inner">
                 <div className="project-img-frame">
@@ -1541,77 +1596,79 @@ export default function Home() {
             </p>
             <div className="divider"></div>
           </div>
-          <div className="timeline">
-            <div className="timeline-item">
-              <div className="timeline-dot"></div>
-              <div className="timeline-date">2024 — SEKARANG</div>
-              <div className="timeline-title">
-                Siswa Rekayasa Perangkat Lunak
+          <TracingBeam className="px-2 md:px-6">
+            <div className="timeline">
+              <div className="timeline-item">
+                <div className="timeline-dot"></div>
+                <div className="timeline-date">2024 — SEKARANG</div>
+                <div className="timeline-title">
+                  Siswa Rekayasa Perangkat Lunak
+                </div>
+                <div className="timeline-org">SMK Telkom Malang</div>
+                <div className="timeline-desc">
+                  Mempelajari pengembangan perangkat lunak dari dasar pemrograman,
+                  OOP, basis data, hingga proyek nyata. Aktif dalam berbagai
+                  kompetisi IT tingkat regional dan nasional.
+                </div>
               </div>
-              <div className="timeline-org">SMK Telkom Malang</div>
-              <div className="timeline-desc">
-                Mempelajari pengembangan perangkat lunak dari dasar pemrograman,
-                OOP, basis data, hingga proyek nyata. Aktif dalam berbagai
-                kompetisi IT tingkat regional dan nasional.
+              <div className="timeline-item">
+                <div className="timeline-dot"></div>
+                <div className="timeline-date">JUNI 2026 — SEKARANG</div>
+                <div className="timeline-title">
+                  Full Stack Web Developer — EazyChise
+                </div>
+                <div className="timeline-org">Web Creation Competition</div>
+                <div className="timeline-desc">
+                  Mengembangkan platform marketplace waralaba responsif
+                  menggunakan Next.js, Tailwind CSS, dan Vercel. Mengimplementasikan
+                  fitur autentikasi, pencarian multi-kategori, kalkulator simulasi
+                  keuntungan, dan formulir digital berbasis Supabase.
+                </div>
+              </div>
+              <div className="timeline-item">
+                <div className="timeline-dot"></div>
+                <div className="timeline-date">APRIL 2026 — SEKARANG</div>
+                <div className="timeline-title">
+                  Mobile Application Developer — Monsef
+                </div>
+                <div className="timeline-org">Project Mandiri</div>
+                <div className="timeline-desc">
+                  Merancang dan membangun aplikasi pencatat keuangan mobile dari
+                  awal hingga produksi menggunakan Flutter &amp; Dart.
+                  Mengintegrasikan OCR API (Scan Struk), Speech-to-Text, dan
+                  Supabase untuk efisiensi otomatisasi input transaksi.
+                </div>
+              </div>
+              <div className="timeline-item">
+                <div className="timeline-dot"></div>
+                <div className="timeline-date">JUNI 2026 — SEKARANG</div>
+                <div className="timeline-title">
+                  Mobile Application Developer — HaloAir
+                </div>
+                <div className="timeline-org">Project Mandiri</div>
+                <div className="timeline-desc">
+                  Mengembangkan aplikasi mobile manajemen PDAM dengan Flutter
+                  menggunakan arsitektur Multi-Role (Admin &amp; User).
+                  Mengintegrasikan RESTful API untuk sinkronisasi data operasional
+                  dan manajemen tagihan real-time.
+                </div>
+              </div>
+              <div className="timeline-item">
+                <div className="timeline-dot"></div>
+                <div className="timeline-date">MEI 2025 — SEKARANG</div>
+                <div className="timeline-title">
+                  UI/UX Designer — PortaTrip
+                </div>
+                <div className="timeline-org">Lomba Design</div>
+                <div className="timeline-desc">
+                  Merancang User Flow dan Wireframe platform aplikasi wisata dan
+                  pemesanan porter guide menggunakan Figma dan Whimsical. Membangun
+                  Interactive Prototype untuk validasi alur navigasi yang intuitif
+                  dan responsif.
+                </div>
               </div>
             </div>
-            <div className="timeline-item">
-              <div className="timeline-dot"></div>
-              <div className="timeline-date">JUNI 2026 — SEKARANG</div>
-              <div className="timeline-title">
-                Full Stack Web Developer — EazyChise
-              </div>
-              <div className="timeline-org">Web Creation Competition</div>
-              <div className="timeline-desc">
-                Mengembangkan platform marketplace waralaba responsif
-                menggunakan Next.js, Tailwind CSS, dan Vercel. Mengimplementasikan
-                fitur autentikasi, pencarian multi-kategori, kalkulator simulasi
-                keuntungan, dan formulir digital berbasis Supabase.
-              </div>
-            </div>
-            <div className="timeline-item">
-              <div className="timeline-dot"></div>
-              <div className="timeline-date">APRIL 2026 — SEKARANG</div>
-              <div className="timeline-title">
-                Mobile Application Developer — Monsef
-              </div>
-              <div className="timeline-org">Project Mandiri</div>
-              <div className="timeline-desc">
-                Merancang dan membangun aplikasi pencatat keuangan mobile dari
-                awal hingga produksi menggunakan Flutter &amp; Dart.
-                Mengintegrasikan OCR API (Scan Struk), Speech-to-Text, dan
-                Supabase untuk efisiensi otomatisasi input transaksi.
-              </div>
-            </div>
-            <div className="timeline-item">
-              <div className="timeline-dot"></div>
-              <div className="timeline-date">JUNI 2026 — SEKARANG</div>
-              <div className="timeline-title">
-                Mobile Application Developer — HaloAir
-              </div>
-              <div className="timeline-org">Project Mandiri</div>
-              <div className="timeline-desc">
-                Mengembangkan aplikasi mobile manajemen PDAM dengan Flutter
-                menggunakan arsitektur Multi-Role (Admin &amp; User).
-                Mengintegrasikan RESTful API untuk sinkronisasi data operasional
-                dan manajemen tagihan real-time.
-              </div>
-            </div>
-            <div className="timeline-item">
-              <div className="timeline-dot"></div>
-              <div className="timeline-date">MEI 2025 — SEKARANG</div>
-              <div className="timeline-title">
-                UI/UX Designer — PortaTrip
-              </div>
-              <div className="timeline-org">Lomba Design</div>
-              <div className="timeline-desc">
-                Merancang User Flow dan Wireframe platform aplikasi wisata dan
-                pemesanan porter guide menggunakan Figma dan Whimsical. Membangun
-                Interactive Prototype untuk validasi alur navigasi yang intuitif
-                dan responsif.
-              </div>
-            </div>
-          </div>
+          </TracingBeam>
         </div>
       </section>
 

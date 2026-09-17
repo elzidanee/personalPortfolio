@@ -2112,3 +2112,13 @@ body[data-theme="light"] .gh-loading-overlay {
     nav { padding:0.35rem 0.45rem; }
     .nav-logo { font-size:0.82rem; padding:0.2rem 0.45rem; }
 }
+
+/* ─── 21ST.DEV BORDER BEAM ANIMATION ─────────────────────── */
+@keyframes border-beam {
+    100% {
+        offset-distance: 100%;
+    }
+}
+.animate-border-beam {
+    animation: border-beam calc(var(--duration) * 1s) infinite linear;
+}
