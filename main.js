@@ -157,10 +157,10 @@ document.addEventListener("DOMContentLoaded", function () {
             if (targetEl) {
                 e.preventDefault();
                 if (lenis) {
-                    lenis.scrollTo(targetEl, { offset: -25, duration: 1.2 });
+                    lenis.scrollTo(targetEl, { offset: -70, duration: 1.2 });
                 } else {
                     window.scrollTo({
-                        top: targetEl.offsetTop - 20,
+                        top: targetEl.offsetTop - 70,
                         behavior: 'smooth'
                     });
                 }
@@ -1023,10 +1023,11 @@ document.addEventListener("DOMContentLoaded", function () {
     ═══════════════════════════════════════════════════════════ */
     document.addEventListener("DOMContentLoaded", () => {
         const toggle = document.getElementById('terminal-toggle');
+        const navToggle = document.getElementById('terminal-nav-btn');
         const widget = document.getElementById('terminal-widget');
         const body   = document.getElementById('terminal-body');
         const input  = document.getElementById('terminal-input');
-        if (!toggle || !widget || !body || !input) return;
+        if (!widget || !body || !input) return;
 
         let isOpen = false;
         let history = [];
@@ -1163,7 +1164,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
 
-        toggle.addEventListener('click', () => {
+        function toggleTerminal() {
             isOpen = !isOpen;
             if (isOpen) {
                 widget.style.display = 'flex';
@@ -1173,6 +1174,20 @@ document.addEventListener("DOMContentLoaded", function () {
             } else {
                 widget.classList.remove('open');
                 setTimeout(() => widget.style.display = 'none', 300);
+            }
+        }
+
+        if (toggle) toggle.addEventListener('click', toggleTerminal);
+        if (navToggle) navToggle.addEventListener('click', toggleTerminal);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && isOpen) {
+                toggleTerminal();
+            }
+        });
+        document.addEventListener('click', (e) => {
+            if (isOpen && !widget.contains(e.target) && (!navToggle || !navToggle.contains(e.target)) && (!toggle || !toggle.contains(e.target))) {
+                toggleTerminal();
             }
         });
 
