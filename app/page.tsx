@@ -1,18 +1,17 @@
 import React from "react";
 import PortfolioClient from "@/components/PortfolioClient";
-import { LampContainer } from "@/components/ui/lamp";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 import { BorderBeam } from "@/components/ui/border-beam";
-import { TracingBeam } from "@/components/ui/tracing-beam";
-import { ScrollVelocity } from "@/components/ui/scroll-velocity";
+import { PixelHero } from "@/components/ui/pixel-perfect-hero";
+import { CleanBackground } from "@/components/ui/clean-background";
 
 export default function Home() {
   return (
     <>
       <PortfolioClient />
 
-      {/* 3D PERSISTENT WEBGL CANVAS */}
-      <canvas id="three-canvas"></canvas>
+      {/* ─── 21ST.DEV CLEAN BACKGROUND (ANIMATED GRID PATTERN & AURORA) ─── */}
+      <CleanBackground />
 
       {/* SCROLL PROGRESS */}
       <div id="scroll-progress"></div>
@@ -113,135 +112,19 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* ─── HERO ──────────────────────────────────────────────── */}
-      <section id="home" className="relative overflow-hidden">
-        <LampContainer className="absolute -top-28 left-0 right-0 h-[480px] -z-1 opacity-70 pointer-events-none" />
-        <div className="hero-ambient-glow"></div>
-        <div className="hero-inner">
-          <div className="hero-left">
-            <div className="hero-tag fade-in">
-              <span className="hero-tag-dot"></span>
-              TERSEDIA UNTUK PROYEK &middot; MALANG, INDONESIA
-            </div>
-            <h1
-              className="hero-h1 fade-in"
-              style={{ transitionDelay: "0.1s" }}
-            >
-              Fullstack &amp; Mobile Developer
-              <br />
-              <span className="line-accent">Membangun Produk Berkualitas.</span>
-            </h1>
-            <p
-              className="hero-sub fade-in"
-              style={{ transitionDelay: "0.15s" }}
-            >
-              Siswa Rekayasa Perangkat Lunak di SMK Telkom Malang. Menguasai
-              arsitektur web modern dengan <strong>Next.js</strong>, aplikasi
-              mobile performa tinggi dengan <strong>Flutter</strong>, dan backend
-              cloud <strong>Supabase</strong>.
-            </p>
-            <div
-              className="hero-btns fade-in"
-              style={{ transitionDelay: "0.2s" }}
-            >
-              <a href="#portfolio" className="btn-primary">
-                Lihat Portofolio <i className="fas fa-arrow-right"></i>
-              </a>
-              <button className="btn-ghost" id="btn-cv">
-                Unduh CV <i className="fas fa-download"></i>
-              </button>
-            </div>
-            <div
-              className="hero-stats fade-in"
-              style={{ transitionDelay: "0.25s" }}
-            >
-              <div>
-                <div className="stat-num countup" data-target="9">
-                  0
-                </div>
-                <div className="stat-label">Proyek Selesai</div>
-              </div>
-              <div>
-                <div className="stat-num countup" data-target="3">
-                  0
-                </div>
-                <div className="stat-label">Tahun Pengalaman</div>
-              </div>
-              <div>
-                <div className="stat-num countup" data-target="15">
-                  0
-                </div>
-                <div className="stat-label">Teknologi Dikuasai</div>
-              </div>
-            </div>
-          </div>
-          <div
-            className="hero-image-side fade-in-r"
-            style={{ transitionDelay: "0.2s" }}
-          >
-            <div className="hero-img-frame">
-              <img src="/asset/zidan.JPG" alt="EL Zidane Ardyansyah" />
-              <div className="hero-badge badge-top">
-                <span className="badge-dot"></span>
-                <span>Open to Work</span>
-              </div>
-              <div className="hero-badge badge-bottom">
-                <i
-                  className="fas fa-graduation-cap"
-                  style={{ color: "var(--accent)", fontSize: "0.75rem" }}
-                ></i>
-                <span>SMK Telkom Malang</span>
-              </div>
-            </div>
-          </div>
-        </div>
+      {/* ─── HERO (PIXEL-PERFECT HERO WITH TAHOE GLASS & VECTOR MARQUEE) ─── */}
+      <section id="home" className="relative overflow-hidden pt-6 sm:pt-10">
+        <PixelHero
+          word1="Fullstack &"
+          word2="Mobile Dev."
+          description="Siswa Rekayasa Perangkat Lunak di SMK Telkom Malang. Menguasai arsitektur web modern dengan Next.js, aplikasi mobile performa tinggi dengan Flutter, dan backend cloud Supabase."
+          primaryCta="Lihat Portofolio"
+          primaryCtaMobile="Portofolio"
+          secondaryCta="Unduh CV"
+          secondaryCtaMobile="CV"
+          githubUrl="https://github.com/elzidanee"
+        />
       </section>
-
-      {/* ─── 3D CONTAINER SCROLL SHOWCASE (21ST.DEV) ──────────── */}
-      <div className="w-full max-w-7xl mx-auto px-4 -mt-12 md:-mt-8">
-        <ContainerScroll
-          titleComponent={
-            <div className="mb-4">
-              <span className="hero-tag mb-4 inline-flex">
-                <span className="hero-tag-dot"></span>
-                PREVIEW SHOWCASE
-              </span>
-              <h2 className="text-2xl md:text-5xl font-extrabold text-white tracking-tight">
-                Membangun Arsitektur Web &amp; Mobile
-                <br />
-                <span className="line-accent">Interaktif &amp; Skalabilitas Nyata</span>
-              </h2>
-            </div>
-          }
-        >
-          <div className="relative w-full h-full flex flex-col justify-between overflow-hidden bg-[#0e111a] rounded-xl border border-white/10">
-            <div className="flex items-center gap-2 px-4 py-3 bg-[#141724] border-b border-white/10">
-              <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
-              <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
-              <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
-              <span className="ml-2 text-xs font-mono text-slate-400 bg-black/40 px-3 py-1 rounded-full border border-white/5">
-                https://eazychise.vercel.app — EazyChise Platform
-              </span>
-            </div>
-            <div className="relative flex-1 overflow-hidden">
-              <img
-                src="/asset/eazychise.png"
-                alt="EazyChise Showcase"
-                className="w-full h-full object-cover object-top"
-              />
-            </div>
-          </div>
-        </ContainerScroll>
-      </div>
-
-      {/* ─── SCROLL VELOCITY MARQUEE (21ST.DEV) ────────────────── */}
-      <ScrollVelocity
-        texts={[
-          "FULLSTACK DEVELOPER • FLUTTER MOBILE • UI/UX DESIGNER",
-          "NEXT.JS • SUPABASE • TYPESCRIPT • TAILWIND CSS • FIGMA",
-        ]}
-        velocity={2.5}
-      />
 
       {/* ─── ABOUT ─────────────────────────────────────────────── */}
       <section id="about" style={{ position: "relative", overflow: "hidden" }}>
@@ -361,7 +244,7 @@ export default function Home() {
                     <div className="gh-avatar-wrap">
                       <img
                         id="gh-avatar"
-                        src=""
+                        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'%3E%3C/svg%3E"
                         alt="Avatar"
                         className="gh-avatar"
                       />
@@ -501,6 +384,49 @@ export default function Home() {
             </p>
             <div className="divider"></div>
           </div>
+
+          {/* ─── 3D FLAGSHIP SHOWCASE (21ST.DEV) ────────────────── */}
+          <div className="w-full max-w-5xl mx-auto my-2 md:my-4">
+            <ContainerScroll
+              titleComponent={
+                <div className="mb-3">
+                  <span className="hero-tag mb-3 inline-flex text-xs">
+                    <span className="hero-tag-dot"></span>
+                    FLAGSHIP LIVE PLATFORM
+                  </span>
+                  <h3 className="text-xl md:text-3xl font-extrabold text-white tracking-tight">
+                    Membangun Arsitektur Web &amp; Mobile
+                    <br />
+                    <span className="line-accent">Interaktif &amp; Skalabilitas Nyata</span>
+                  </h3>
+                </div>
+              }
+            >
+              <div className="relative w-full h-full flex flex-col justify-between overflow-hidden bg-[#0e111a] rounded-xl border border-white/10">
+                <div className="flex items-center gap-2 px-4 py-3 bg-[#141724] border-b border-white/10">
+                  <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
+                  <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                  <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
+                  <a
+                    href="https://eazychise.vercel.app"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="ml-2 text-xs font-mono text-cyan-400 hover:underline bg-black/40 px-3 py-1 rounded-full border border-white/5 flex items-center gap-1.5"
+                  >
+                    https://eazychise.vercel.app <i className="fas fa-external-link-alt text-[10px]"></i>
+                  </a>
+                </div>
+                <div className="relative flex-1 overflow-hidden">
+                  <img
+                    src="/asset/eazychise.png"
+                    alt="EazyChise Showcase"
+                    className="w-full h-full object-cover object-top"
+                  />
+                </div>
+              </div>
+            </ContainerScroll>
+          </div>
+
           <div className="projects-bento-grid">
             {/* Card 1 — EazyChise (Featured Flagship) */}
             <div
@@ -1596,8 +1522,7 @@ export default function Home() {
             </p>
             <div className="divider"></div>
           </div>
-          <TracingBeam className="px-2 md:px-6">
-            <div className="timeline">
+          <div className="timeline">
               <div className="timeline-item">
                 <div className="timeline-dot"></div>
                 <div className="timeline-date">2024 — SEKARANG</div>
@@ -1668,7 +1593,6 @@ export default function Home() {
                 </div>
               </div>
             </div>
-          </TracingBeam>
         </div>
       </section>
 
@@ -1881,7 +1805,12 @@ export default function Home() {
           >
             <i className="fas fa-times"></i>
           </button>
-          <img src="" alt="" className="project-modal-img" id="modal-img" />
+          <img
+            src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'%3E%3C/svg%3E"
+            alt=""
+            className="project-modal-img"
+            id="modal-img"
+          />
           <div className="project-modal-body">
             <span className="project-modal-tag" id="modal-tag">
               WEB
@@ -1963,6 +1892,7 @@ export default function Home() {
         <img
           className="lightbox-content"
           id="lightbox-img"
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'%3E%3C/svg%3E"
           alt="Certificate Preview"
         />
         <div id="lightbox-caption" className="lightbox-caption"></div>

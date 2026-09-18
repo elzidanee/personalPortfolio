@@ -1021,9 +1021,10 @@ body[data-theme="light"] .available-badge {
 /* ─── EXPERIENCE / TIMELINE ──────────────────────────────── */
 .timeline { position:relative; padding-left:1.75rem; }
 .timeline::before {
-    content:''; position:absolute; left:0; top:0.35rem; bottom:0.35rem; width:1px;
-    background: linear-gradient(to bottom, var(--accent), rgba(0,229,195,0.3), transparent);
-    opacity: 0.2;
+    content:''; position:absolute; left:0; top:0.35rem; bottom:0.35rem; width:2px;
+    background: linear-gradient(to bottom, var(--accent) 0%, #38bdf8 50%, rgba(91,127,255,0.2) 100%);
+    box-shadow: 0 0 10px rgba(0,229,195,0.35);
+    opacity: 0.7;
 }
 .timeline-item {
     position:relative; margin-bottom:2.25rem; padding-left:1.2rem;
@@ -2122,3 +2123,32 @@ body[data-theme="light"] .gh-loading-overlay {
 .animate-border-beam {
     animation: border-beam calc(var(--duration) * 1s) infinite linear;
 }
+
+/* ─── 21ST.DEV & MAGIC UI MARQUEE ANIMATION ──────────────── */
+@keyframes marquee {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(calc(-100% - var(--gap, 1.25rem)));
+    }
+}
+@keyframes marquee-reverse {
+    from {
+        transform: translateX(calc(-100% - var(--gap, 1.25rem)));
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+.animate-marquee {
+    animation: marquee var(--duration, 35s) linear infinite;
+}
+.animate-marquee-reverse {
+    animation: marquee-reverse var(--duration, 35s) linear infinite;
+}
+.marquee-pause:hover .animate-marquee,
+.marquee-pause:hover .animate-marquee-reverse {
+    animation-play-state: paused;
+}
+
