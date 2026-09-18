@@ -474,22 +474,32 @@ export default function PortfolioClient() {
       }
       setTimeout(type, 1200);
 
-      /* ── DYNAMIC SPOTLIGHT TRACKER ────────────────────────────── */
+      /* ── DYNAMIC SPOTLIGHT TRACKER (THROTTLED) ────────────────── */
       const spotlightCards = document.querySelectorAll(
         ".spotlight-card"
       ) as NodeListOf<HTMLElement>;
+      let spotlightRAF = false;
+      let lastMouseX = 0, lastMouseY = 0;
       document.addEventListener(
         "mousemove",
         (e) => {
-          spotlightCards.forEach((card) => {
-            const rect = card.getBoundingClientRect();
-            if (rect.bottom >= -50 && rect.top <= window.innerHeight + 50) {
-              const x = e.clientX - rect.left;
-              const y = e.clientY - rect.top;
-              card.style.setProperty("--mouse-x", `${x}px`);
-              card.style.setProperty("--mouse-y", `${y}px`);
-            }
-          });
+          lastMouseX = e.clientX;
+          lastMouseY = e.clientY;
+          if (!spotlightRAF) {
+            spotlightRAF = true;
+            requestAnimationFrame(() => {
+              spotlightCards.forEach((card) => {
+                const rect = card.getBoundingClientRect();
+                if (rect.bottom >= -50 && rect.top <= window.innerHeight + 50) {
+                  const x = lastMouseX - rect.left;
+                  const y = lastMouseY - rect.top;
+                  card.style.setProperty("--mouse-x", `${x}px`);
+                  card.style.setProperty("--mouse-y", `${y}px`);
+                }
+              });
+              spotlightRAF = false;
+            });
+          }
         },
         { passive: true }
       );
@@ -620,26 +630,20 @@ export default function PortfolioClient() {
             card,
             {
               opacity: 0,
-              y: 65,
-              rotationX: 15,
-              rotationY: isAlt ? -5 : 5,
-              scale: 0.93,
+              y: 50,
+              scale: 0.95,
               transformPerspective: 1200,
             },
             {
               opacity: 1,
               y: 0,
-              rotationX: 0,
-              rotationY: 0,
               scale: 1,
-              duration: 1.0,
-              ease: "power3.out",
+              duration: 0.7,
+              ease: "power2.out",
               scrollTrigger: {
                 trigger: card,
-                start: "top 92%",
-                end: "top 55%",
-                scrub: 1.1,
-                toggleActions: "play none none reverse",
+                start: "top 90%",
+                toggleActions: "play none none none", // no reverse = no re-calc on scroll up
               },
             }
           );
@@ -648,7 +652,7 @@ export default function PortfolioClient() {
         gsap.utils.toArray(".bg-text-parallax").forEach((el: any) => {
           const speed = parseFloat(el.getAttribute("data-speed")) || 0.15;
           const dir = el.getAttribute("data-parallax-dir") || "x";
-          const distance = (dir === "x" ? 240 : 160) * (speed > 0 ? 1 : -1);
+          const distance = (dir === "x" ? 180 : 120) * (speed > 0 ? 1 : -1);
 
           gsap.to(el, {
             [dir]: distance,
@@ -657,22 +661,21 @@ export default function PortfolioClient() {
               trigger: el.closest("section") || el.parentElement,
               start: "top bottom",
               end: "bottom top",
-              scrub: 1.2,
+              scrub: 2, // Higher scrub = smoother but less frequent updates
             },
           });
         });
 
         gsap.to(".hero-image-side", {
-          y: 90,
-          rotationX: -14,
-          scale: 0.93,
-          opacity: 0.8,
+          y: 60,
+          scale: 0.95,
+          opacity: 0.85,
           ease: "none",
           scrollTrigger: {
             trigger: "#home",
             start: "top top",
             end: "bottom top",
-            scrub: 1,
+            scrub: 2, // Smoother, less frequent
           },
         });
 
@@ -713,7 +716,7 @@ export default function PortfolioClient() {
         });
       }
 
-      /* ── THREE.JS 3D PERSISTENT CANVAS ───────────────────────── */
+      /* ── THREE.JS 3D PERSISTENT CANVAS (OPTIMIZED) ─────────────── */
       const canvas = document.getElementById(
         "three-canvas"
       ) as HTMLCanvasElement;
@@ -731,12 +734,14 @@ export default function PortfolioClient() {
         const renderer = new THREE.WebGLRenderer({
           canvas: canvas,
           alpha: true,
-          antialias: true,
+          antialias: false, // Disable antialias for performance
+          powerPreference: "low-power",
         });
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.setPixelRatio(1); // Always 1x — no retina overhead
 
-        const particlesCount = 420;
+        // Reduced particle count: 420 → 180
+        const particlesCount = 180;
         const posArray = new Float32Array(particlesCount * 3);
         const colorArray = new Float32Array(particlesCount * 3);
 
@@ -765,10 +770,10 @@ export default function PortfolioClient() {
         geometry.setAttribute("color", new THREE.BufferAttribute(colorArray, 3));
 
         const material = new THREE.PointsMaterial({
-          size: 0.065,
+          size: 0.08,
           vertexColors: true,
           transparent: true,
-          opacity: 0.35,
+          opacity: 0.3,
           blending: THREE.AdditiveBlending,
         });
 
@@ -776,25 +781,13 @@ export default function PortfolioClient() {
         scene.add(particlesMesh);
 
         let scrollProgress = 0;
-        let targetCamZ = 24;
-        let targetCamY = 0;
-        let targetMouseX = 0;
-        let targetMouseY = 0;
 
         const handleResize = () => {
           camera.aspect = window.innerWidth / window.innerHeight;
           camera.updateProjectionMatrix();
           renderer.setSize(window.innerWidth, window.innerHeight);
         };
-        window.addEventListener("resize", handleResize);
-
-        const handleMouseMoveCanvas = (e: MouseEvent) => {
-          targetMouseX = (e.clientX / window.innerWidth - 0.5) * 2;
-          targetMouseY = (e.clientY / window.innerHeight - 0.5) * 2;
-        };
-        document.addEventListener("mousemove", handleMouseMoveCanvas, {
-          passive: true,
-        });
+        window.addEventListener("resize", handleResize, { passive: true });
 
         if (lenis) {
           lenis.on("scroll", (e: any) => {
@@ -814,27 +807,25 @@ export default function PortfolioClient() {
 
         const clock = new THREE.Clock();
         let animationFrameId: number;
+        let lastThreeTime = 0;
+        const THREE_INTERVAL = 33; // ~30fps for THREE.js canvas
 
-        function animate3D() {
+        function animate3D(ts: number) {
           if (isCleanedUp) return;
           animationFrameId = requestAnimationFrame(animate3D);
+          if (ts - lastThreeTime < THREE_INTERVAL) return;
+          lastThreeTime = ts;
+
           const elapsedTime = clock.getElapsedTime();
+          particlesMesh.rotation.y = elapsedTime * 0.012 + scrollProgress * Math.PI * 0.4;
+          particlesMesh.rotation.x = scrollProgress * 0.2;
 
-          particlesMesh.rotation.y =
-            elapsedTime * 0.015 + scrollProgress * Math.PI * 0.5;
-          particlesMesh.rotation.x = scrollProgress * 0.25;
-
-          targetCamZ = 24 - scrollProgress * 10;
-          targetCamY = -scrollProgress * 8 - targetMouseY;
-          const targetCamX = targetMouseX;
-
+          const targetCamZ = 24 - scrollProgress * 10;
           camera.position.z += (targetCamZ - camera.position.z) * 0.04;
-          camera.position.y += (targetCamY - camera.position.y) * 0.04;
-          camera.position.x += (targetCamX - camera.position.x) * 0.04;
 
           renderer.render(scene, camera);
         }
-        animate3D();
+        animate3D(0);
       }
 
       /* ── DARK / LIGHT MODE TOGGLE ────────────────────────────── */

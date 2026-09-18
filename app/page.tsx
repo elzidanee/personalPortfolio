@@ -113,7 +113,7 @@ export default function Home() {
       </nav>
 
       {/* ─── HERO (PIXEL-PERFECT HERO WITH TAHOE GLASS & VECTOR MARQUEE) ─── */}
-      <section id="home" className="relative overflow-hidden pt-6 sm:pt-10">
+      <section id="home" className="relative overflow-hidden" style={{ minHeight: "100dvh" }}>
         <PixelHero
           word1="Fullstack &"
           word2="Mobile Dev."
