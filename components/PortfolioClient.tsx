@@ -49,11 +49,11 @@ export default function PortfolioClient() {
       let lenis: any = null;
       if (typeof window.Lenis !== "undefined") {
         lenis = new window.Lenis({
-          duration: 1.25,
+          duration: 0.8,
           easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
           smoothWheel: true,
-          wheelMultiplier: 0.95,
-          touchMultiplier: 1.5,
+          wheelMultiplier: 1.0,
+          touchMultiplier: 1.2,
         });
         window.lenis = lenis;
 
@@ -65,7 +65,7 @@ export default function PortfolioClient() {
           gsap.ticker.add((time: number) => {
             lenis.raf(time * 1000);
           });
-          gsap.ticker.lagSmoothing(0);
+          gsap.ticker.lagSmoothing(500, 33);
         } else {
           const raf = (time: number) => {
             lenis.raf(time);
@@ -125,33 +125,56 @@ export default function PortfolioClient() {
       };
       document.addEventListener("keydown", handleEscapeSplash);
 
-      /* ── SCROLL PROGRESS BAR ─────────────────────────────────── */
+      /* ── SCROLL PROGRESS BAR & NAV STATES (BATCHED & GUARDED) ─── */
       const prog = document.getElementById("scroll-progress");
+      const nav = document.getElementById("nav");
+      const btt = document.getElementById("btt");
+
+      let isNavScrolled = false;
+      let isBttVisible = false;
+
+      const updateScrollUi = (scrollY: number, progressPct: number) => {
+        if (prog) prog.style.width = progressPct + "%";
+
+        const nextScrolled = scrollY > 40;
+        if (nextScrolled !== isNavScrolled && nav) {
+          isNavScrolled = nextScrolled;
+          nav.classList.toggle("scrolled", isNavScrolled);
+        }
+
+        const nextBtt = scrollY > 350;
+        if (nextBtt !== isBttVisible && btt) {
+          isBttVisible = nextBtt;
+          btt.classList.toggle("visible", isBttVisible);
+        }
+      };
+
       if (lenis) {
         lenis.on("scroll", (e: any) => {
-          if (prog) prog.style.width = e.progress * 100 + "%";
+          updateScrollUi(e.animatedScroll ?? window.scrollY, (e.progress || 0) * 100);
         });
       } else {
-        window.addEventListener("scroll", () => {
-          const s = document.documentElement.scrollTop;
-          const h =
-            document.documentElement.scrollHeight - window.innerHeight;
-          if (h > 0 && prog) {
-            prog.style.width = (s / h) * 100 + "%";
-          }
-        });
+        let scrollRAF = false;
+        window.addEventListener(
+          "scroll",
+          () => {
+            if (!scrollRAF) {
+              scrollRAF = true;
+              requestAnimationFrame(() => {
+                const s = document.documentElement.scrollTop;
+                const h =
+                  document.documentElement.scrollHeight - window.innerHeight;
+                const pct = h > 0 ? (s / h) * 100 : 0;
+                updateScrollUi(s, pct);
+                scrollRAF = false;
+              });
+            }
+          },
+          { passive: true }
+        );
       }
 
-      /* ── NAV SCROLL & ACTIVE LINK HIGHLIGHT ──────────────────── */
-      const nav = document.getElementById("nav");
-      window.addEventListener(
-        "scroll",
-        () => {
-          if (nav) nav.classList.toggle("scrolled", window.scrollY > 40);
-        },
-        { passive: true }
-      );
-
+      /* ── ACTIVE LINK HIGHLIGHT VIA INTERSECTION OBSERVER (0 LAYOUT REFLOWS) ── */
       const navLinks = document.querySelectorAll(".nav-links a");
       const sectionIds = [
         "home",
@@ -166,30 +189,20 @@ export default function PortfolioClient() {
         .map((id) => document.getElementById(id))
         .filter(Boolean) as HTMLElement[];
 
-      function updateActiveLink() {
-        const mid = window.scrollY + window.innerHeight * 0.35;
-        let activeId = allSections[0] ? allSections[0].id : "";
-        allSections.forEach((s) => {
-          if (s.offsetTop <= mid) {
-            activeId = s.id;
-          }
-        });
-        navLinks.forEach((a) =>
-          a.classList.toggle("active", a.getAttribute("href") === "#" + activeId)
-        );
-      }
-      window.addEventListener("scroll", updateActiveLink, { passive: true });
-      updateActiveLink();
-
-      /* ── BACK TO TOP ─────────────────────────────────────────── */
-      const btt = document.getElementById("btt");
-      window.addEventListener(
-        "scroll",
-        () => {
-          if (btt) btt.classList.toggle("visible", window.scrollY > 350);
+      const navObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              const id = entry.target.id;
+              navLinks.forEach((a) =>
+                a.classList.toggle("active", a.getAttribute("href") === "#" + id)
+              );
+            }
+          });
         },
-        { passive: true }
+        { rootMargin: "-20% 0px -65% 0px" }
       );
+      allSections.forEach((s) => navObserver.observe(s));
 
       if (btt) {
         btt.addEventListener("click", () => {
@@ -666,18 +679,20 @@ export default function PortfolioClient() {
           });
         });
 
-        gsap.to(".hero-image-side", {
-          y: 60,
-          scale: 0.95,
-          opacity: 0.85,
-          ease: "none",
-          scrollTrigger: {
-            trigger: "#home",
-            start: "top top",
-            end: "bottom top",
-            scrub: 2, // Smoother, less frequent
-          },
-        });
+        if (document.querySelector(".hero-image-side")) {
+          gsap.to(".hero-image-side", {
+            y: 60,
+            scale: 0.95,
+            opacity: 0.85,
+            ease: "none",
+            scrollTrigger: {
+              trigger: "#home",
+              start: "top top",
+              end: "bottom top",
+              scrub: 2, // Smoother, less frequent
+            },
+          });
+        }
 
         gsap.utils.toArray(".section-header").forEach((hdr: any) => {
           gsap.fromTo(

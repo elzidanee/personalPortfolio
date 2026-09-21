@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useRef } from "react";
 import { cn } from "@/lib/utils";
 
 /**
@@ -37,34 +37,6 @@ export function FloatingPaths({ position = 1, className }: FloatingPathsProps) {
     [position]
   );
 
-  useEffect(() => {
-    const svg = svgRef.current;
-    if (!svg) return;
-
-    const pathEls = svg.querySelectorAll<SVGPathElement>("path[data-float]");
-    if (!pathEls.length) return;
-
-    let animId: number;
-    let start: number | null = null;
-
-    function step(ts: number) {
-      if (!start) start = ts;
-      const elapsed = (ts - start) / 1000;
-
-      pathEls.forEach((el, i) => {
-        const dur = paths[i]?.duration ?? 22;
-        const delay = paths[i]?.delay ?? 0;
-        const t = ((elapsed + delay) % dur) / dur;
-        el.style.strokeDashoffset = `${(1 - t)}`;
-      });
-
-      animId = requestAnimationFrame(step);
-    }
-
-    animId = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(animId);
-  }, [paths]);
-
   return (
     <div
       className={cn(
@@ -72,6 +44,12 @@ export function FloatingPaths({ position = 1, className }: FloatingPathsProps) {
         className
       )}
     >
+      <style>{`
+        @keyframes zkFloatPath {
+          0% { stroke-dashoffset: 1; }
+          100% { stroke-dashoffset: 0; }
+        }
+      `}</style>
       <svg
         ref={svgRef}
         className="w-full h-full text-cyan-400/20"
@@ -83,7 +61,6 @@ export function FloatingPaths({ position = 1, className }: FloatingPathsProps) {
         {paths.map((path) => (
           <path
             key={path.id}
-            data-float="true"
             d={path.d}
             stroke="currentColor"
             strokeWidth={path.strokeWidth}
@@ -91,6 +68,10 @@ export function FloatingPaths({ position = 1, className }: FloatingPathsProps) {
             strokeDasharray="1"
             strokeDashoffset="1"
             fill="none"
+            style={{
+              animation: `zkFloatPath ${path.duration}s linear infinite`,
+              animationDelay: `-${path.delay}s`,
+            }}
           />
         ))}
       </svg>

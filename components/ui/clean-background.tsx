@@ -52,18 +52,38 @@ function SubtleGrid({ width = 48, height = 48, className }: CleanGridProps) {
 
 export const CleanBackground = () => {
   return (
-    <div className="fixed inset-0 pointer-events-none z-[-1] overflow-hidden select-none bg-[var(--bg,#07080b)]">
-      {/* ─── 21ST.DEV @ibelick RADIAL SPOTLIGHT (JULIEN THIBEAUT) ─── */}
-      <div className="absolute -top-[15%] left-1/2 -translate-x-1/2 w-[90vw] max-w-[1200px] h-[600px] bg-gradient-to-b from-cyan-500/[0.07] via-sky-500/[0.03] to-transparent blur-[140px] rounded-full pointer-events-none" />
-      <div className="absolute top-[40%] -left-[10%] w-[550px] h-[550px] bg-gradient-to-tr from-cyan-500/[0.035] via-blue-600/[0.02] to-transparent blur-[130px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-[5%] -right-[10%] w-[600px] h-[600px] bg-gradient-to-tl from-indigo-500/[0.035] via-purple-600/[0.02] to-transparent blur-[140px] rounded-full pointer-events-none" />
+    <div
+      className="fixed inset-0 pointer-events-none z-[-1] overflow-hidden select-none bg-[var(--bg,#07080b)]"
+      style={{ contain: "strict", transform: "translateZ(0)" }}
+    >
+      {/* ─── 21ST.DEV @ibelick RADIAL SPOTLIGHT (JULIEN THIBEAUT) — ZERO BLUR OVERHEAD ─── */}
+      <div
+        className="absolute -top-[10%] left-1/2 -translate-x-1/2 w-[90vw] max-w-[1200px] h-[550px] rounded-full pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(ellipse at 50% 20%, rgba(6, 182, 212, 0.08) 0%, rgba(14, 165, 233, 0.03) 45%, transparent 70%)",
+        }}
+      />
+      <div
+        className="absolute top-[35%] -left-[10%] w-[550px] h-[550px] rounded-full pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(circle at 40% 40%, rgba(6, 182, 212, 0.05) 0%, rgba(37, 99, 235, 0.02) 50%, transparent 70%)",
+        }}
+      />
+      <div
+        className="absolute bottom-[5%] -right-[10%] w-[600px] h-[600px] rounded-full pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.05) 0%, rgba(147, 51, 234, 0.02) 50%, transparent 70%)",
+        }}
+      />
 
       {/* ─── 21ST.DEV SUBTLE TECHNICAL GRID (100% CLEAN, ZERO BLOCKS, ZERO PARTICLES) ─── */}
       <SubtleGrid width={52} height={52} />
 
       {/* ─── 21ST.DEV BUNDUI FLOATING PATHS (SMOOTH FLOWING VECTOR BEZIER CURVES) ─── */}
-      <FloatingPaths position={1} className="opacity-90" />
-      <FloatingPaths position={-1} className="opacity-60" />
+      <FloatingPaths position={1} className="opacity-80" />
     </div>
   );
 };

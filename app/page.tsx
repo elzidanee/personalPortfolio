@@ -16,9 +16,6 @@ export default function Home() {
       {/* SCROLL PROGRESS */}
       <div id="scroll-progress"></div>
 
-      {/* GRID BG */}
-      <div className="grid-bg"></div>
-
       {/* ─── SPLASH ─────────────────────────────────────────────── */}
       <div id="splash">
         <div className="splash-logo">ZeeDev</div>
@@ -146,10 +143,9 @@ export default function Home() {
           style={{
             width: "400px",
             height: "400px",
-            background: "rgba(91,127,255,0.04)",
+            background: "radial-gradient(circle, rgba(91,127,255,0.08) 0%, transparent 70%)",
             top: "15%",
             right: "5%",
-            filter: "blur(130px)",
             position: "absolute",
             zIndex: -1,
             borderRadius: "50%",
@@ -365,10 +361,9 @@ export default function Home() {
           style={{
             width: "350px",
             height: "350px",
-            background: "rgba(0,229,195,0.03)",
+            background: "radial-gradient(circle, rgba(0,229,195,0.07) 0%, transparent 70%)",
             bottom: "10%",
             left: "5%",
-            filter: "blur(110px)",
             position: "absolute",
             zIndex: -1,
             borderRadius: "50%",
@@ -924,10 +919,9 @@ export default function Home() {
           style={{
             width: "300px",
             height: "300px",
-            background: "rgba(91,127,255,0.03)",
+            background: "radial-gradient(circle, rgba(91,127,255,0.07) 0%, transparent 70%)",
             top: "20%",
             right: "10%",
-            filter: "blur(100px)",
             position: "absolute",
             zIndex: -1,
             borderRadius: "50%",
@@ -1068,10 +1062,9 @@ export default function Home() {
           style={{
             width: "350px",
             height: "350px",
-            background: "rgba(0,229,195,0.04)",
+            background: "radial-gradient(circle, rgba(0,229,195,0.07) 0%, transparent 70%)",
             top: "10%",
             left: "-5%",
-            filter: "blur(100px)",
             position: "absolute",
             zIndex: -1,
             borderRadius: "50%",
@@ -1502,10 +1495,9 @@ export default function Home() {
           style={{
             width: "400px",
             height: "400px",
-            background: "rgba(0,229,195,0.03)",
+            background: "radial-gradient(circle, rgba(0,229,195,0.07) 0%, transparent 70%)",
             bottom: "15%",
             left: "10%",
-            filter: "blur(120px)",
             position: "absolute",
             zIndex: -1,
             borderRadius: "50%",
@@ -1624,10 +1616,9 @@ export default function Home() {
           style={{
             width: "350px",
             height: "350px",
-            background: "rgba(91,127,255,0.04)",
+            background: "radial-gradient(circle, rgba(91,127,255,0.07) 0%, transparent 70%)",
             top: "10%",
             right: "5%",
-            filter: "blur(100px)",
             position: "absolute",
             zIndex: -1,
             borderRadius: "50%",

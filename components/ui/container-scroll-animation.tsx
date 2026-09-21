@@ -93,7 +93,7 @@ export const Card = ({
         boxShadow:
           "0 20px 50px rgba(0, 0, 0, 0.6), 0 0 40px rgba(59, 130, 246, 0.1)",
       }}
-      className="max-w-5xl mx-auto h-[20rem] sm:h-[26rem] md:h-[32rem] w-full border border-white/10 p-1.5 md:p-3 bg-[#10131c]/90 backdrop-blur-xl rounded-2xl shadow-2xl overflow-hidden"
+      className="max-w-5xl mx-auto h-[20rem] sm:h-[26rem] md:h-[32rem] w-full border border-white/10 p-1.5 md:p-3 bg-[#10131c] rounded-2xl shadow-2xl overflow-hidden transform-gpu will-change-transform"
     >
       <div className="h-full w-full overflow-hidden rounded-xl bg-[#090a0f] border border-white/5">
         {children}
