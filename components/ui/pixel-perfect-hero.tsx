@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ArrowRight, Download } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -130,50 +130,120 @@ const LOGOS: LogoItem[] = [
   },
 ];
 
-/* ─── SEAMLESS MARQUEE ───────────────────────────────────────────── */
+/* ─── SEAMLESS MARQUEE (CSS-only, GPU-composited) ────────────────── */
 function Marquee() {
   return (
-    <div className="relative z-10 w-full border-t border-white/[0.06] select-none overflow-hidden py-6">
-      <div
-        style={{ maskImage: "linear-gradient(to right, transparent, black 8%, black 92%, transparent)" }}
-        className="overflow-hidden"
-      >
-        <div
-          className="flex w-max"
-          style={{ animation: "zkMarquee 36s linear infinite", willChange: "transform" }}
-        >
-          {[0, 1, 2, 3].map((clone) => (
-            <div key={clone} className="flex items-center" aria-hidden={clone > 0 ? true : undefined}>
-              {LOGOS.map((item, i) => (
-                <div
-                  key={`${clone}-${i}`}
-                  className="flex items-center justify-center w-16 h-16 mx-8 opacity-40 hover:opacity-70 transition-opacity duration-200 shrink-0"
-                  title={item.label}
-                >
-                  {item.svg}
-                </div>
-              ))}
-            </div>
-          ))}
+    <>
+      <style>{`
+        .zk-mq-root {
+          position: relative;
+          z-index: 10;
+          width: 100%;
+          border-top: 1px solid rgba(255,255,255,0.05);
+          padding: 18px 0;
+          overflow: hidden;
+          contain: layout style;
+          user-select: none;
+        }
+        .zk-mq-fade {
+          overflow: hidden;
+          mask-image: linear-gradient(to right,transparent,black 6%,black 94%,transparent);
+          -webkit-mask-image: linear-gradient(to right,transparent,black 6%,black 94%,transparent);
+        }
+        .zk-mq-track {
+          display: flex;
+          width: max-content;
+          animation: zkMqScroll 28s linear infinite;
+          will-change: transform;
+          transform: translateZ(0);
+          backface-visibility: hidden;
+        }
+        .zk-mq-root:hover .zk-mq-track {
+          animation-play-state: paused;
+        }
+        @keyframes zkMqScroll {
+          from { transform: translateZ(0) translateX(0); }
+          to   { transform: translateZ(0) translateX(-50%); }
+        }
+        .zk-mq-set { display:flex; align-items:center; flex-shrink:0; }
+        .zk-mq-item {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 5px;
+          width: 72px;
+          margin: 0 18px;
+          opacity: 0.32;
+          transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.22,1,0.36,1);
+          flex-shrink: 0;
+          cursor: default;
+        }
+        .zk-mq-item:hover { opacity: 0.8; transform: translateY(-3px) scale(1.1); }
+        .zk-mq-lbl {
+          font-size: 9px;
+          font-family: 'JetBrains Mono', monospace;
+          color: rgba(255,255,255,0.28);
+          letter-spacing: 0.05em;
+          white-space: nowrap;
+          transition: color 0.2s ease;
+        }
+        .zk-mq-item:hover .zk-mq-lbl { color: rgba(255,255,255,0.55); }
+        @media (prefers-reduced-motion: reduce) {
+          .zk-mq-track { animation-duration: 80s !important; }
+        }
+      `}</style>
+      <div className="zk-mq-root">
+        <div className="zk-mq-fade">
+          <div className="zk-mq-track">
+            {[0, 1].map((clone) => (
+              <div key={clone} className="zk-mq-set" aria-hidden={clone > 0 ? true : undefined}>
+                {LOGOS.map((item, i) => (
+                  <div key={`${clone}-${i}`} className="zk-mq-item" title={item.label}>
+                    {item.svg}
+                    <span className="zk-mq-lbl">{item.label}</span>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
 /* ─── DEV BENTO ──────────────────────────────────────────────────── */
 type ActiveTab = "about" | "stack" | "status";
 
+const STACK_ROWS: [string, string][] = [
+  ["WEB",     "Next.js 16 App Router"],
+  ["MOBILE",  "Flutter · Kotlin · Jetpack"],
+  ["BACKEND", "Supabase & PostgreSQL"],
+  ["LANG",    "TypeScript & Python"],
+  ["STYLE",   "Tailwind CSS"],
+  ["DESIGN",  "Figma · Android Studio"],
+];
+
 function DevBento() {
   const [tab, setTab] = useState<ActiveTab>("about");
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { const t = setTimeout(() => setMounted(true), 80); return () => clearTimeout(t); }, []);
 
   return (
-    <div className="w-full rounded-xl border border-white/[0.08] bg-[#0e101a] overflow-hidden shadow-2xl">
-      <div className="flex items-center gap-0 border-b border-white/[0.07]">
-        <div className="flex items-center gap-1.5 px-4 py-3 border-r border-white/[0.07]">
-          <span className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]" />
-          <span className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]" />
-          <span className="w-2.5 h-2.5 rounded-full bg-[#27c93f]" />
+    <div
+      className={cn(
+        "w-full rounded-2xl border border-white/[0.08] overflow-hidden transition-all duration-700",
+        "bg-gradient-to-br from-[#0d0f1a] via-[#0e101a] to-[#0b0d16]",
+        mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+      )}
+      style={{ boxShadow: "0 0 0 1px rgba(255,255,255,0.04), 0 24px 64px -12px rgba(0,0,0,0.7), 0 0 40px -20px rgba(91,127,255,0.15)" }}
+    >
+      {/* Window chrome */}
+      <div className="flex items-center gap-0 border-b border-white/[0.06] bg-white/[0.015]">
+        <div className="flex items-center gap-1.5 px-4 py-3 border-r border-white/[0.06]">
+          <span className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]" style={{ boxShadow: "0 0 6px rgba(255,95,86,0.55)" }} />
+          <span className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]" style={{ boxShadow: "0 0 6px rgba(255,189,46,0.45)" }} />
+          <span className="w-2.5 h-2.5 rounded-full bg-[#27c93f]" style={{ boxShadow: "0 0 6px rgba(39,201,63,0.45)" }} />
         </div>
         <div className="flex items-center gap-0 flex-1">
           {(["about", "stack", "status"] as ActiveTab[]).map((t) => (
@@ -181,12 +251,14 @@ function DevBento() {
               key={t}
               onClick={() => setTab(t)}
               className={cn(
-                "px-4 py-3 text-xs font-mono tracking-wide border-r border-white/[0.07] transition-colors duration-150 cursor-pointer",
-                tab === t
-                  ? "bg-white/[0.06] text-white"
-                  : "text-white/30 hover:text-white/60 hover:bg-white/[0.03]"
+                "px-4 py-3 text-xs font-mono tracking-wide border-r border-white/[0.06] transition-all duration-200 cursor-pointer relative",
+                tab === t ? "text-white bg-white/[0.06]" : "text-white/30 hover:text-white/60 hover:bg-white/[0.03]"
               )}
             >
+              {tab === t && (
+                <span className="absolute bottom-0 left-0 right-0 h-[2px] rounded-t"
+                  style={{ background: "linear-gradient(90deg,#60a5fa,#a78bfa)" }} />
+              )}
               {t === "about" && "about.ts"}
               {t === "stack" && "stack.sh"}
               {t === "status" && "profile.id"}
@@ -198,30 +270,23 @@ function DevBento() {
       <div className="p-5 font-mono text-[13px] leading-6 min-h-[270px]">
         {tab === "about" && (
           <div className="space-y-0.5 text-white/50">
-            <div className="text-white/25 mb-3">// about.ts</div>
-            <div><span className="text-white/40">const</span> <span className="text-white/80">zidane</span> <span className="text-white/40">=</span> {"{"}</div>
-            <div className="pl-5"><span className="text-[#7dd3fc]/70">name</span><span className="text-white/40">:</span> <span className="text-white/70">&quot;EL Zidane Ardyansyah&quot;</span><span className="text-white/40">,</span></div>
-            <div className="pl-5"><span className="text-[#7dd3fc]/70">school</span><span className="text-white/40">:</span> <span className="text-white/70">&quot;SMK Telkom Malang&quot;</span><span className="text-white/40">,</span></div>
-            <div className="pl-5"><span className="text-[#7dd3fc]/70">focus</span><span className="text-white/40">:</span> <span className="text-white/70">&quot;Web &amp; Mobile Engineering&quot;</span><span className="text-white/40">,</span></div>
-            <div className="pl-5"><span className="text-[#7dd3fc]/70">openToWork</span><span className="text-white/40">:</span> <span className="text-[#86efac]/70">true</span></div>
-            <div>{"}"}<span className="text-white/40">;</span></div>
+            <div className="text-white/20 mb-3 text-[11px]">// about.ts</div>
+            <div><span className="text-[#93c5fd]/60">const</span> <span className="text-white/80">zidane</span> <span className="text-white/30">=</span> {"{"}</div>
+            <div className="pl-5"><span className="text-[#7dd3fc]/70">name</span><span className="text-white/30">:</span> <span className="text-[#86efac]/60">&quot;EL Zidane Ardyansyah&quot;</span><span className="text-white/30">,</span></div>
+            <div className="pl-5"><span className="text-[#7dd3fc]/70">school</span><span className="text-white/30">:</span> <span className="text-[#86efac]/60">&quot;SMK Telkom Malang&quot;</span><span className="text-white/30">,</span></div>
+            <div className="pl-5"><span className="text-[#7dd3fc]/70">focus</span><span className="text-white/30">:</span> <span className="text-[#86efac]/60">&quot;Web &amp; Mobile Engineering&quot;</span><span className="text-white/30">,</span></div>
+            <div className="pl-5"><span className="text-[#7dd3fc]/70">openToWork</span><span className="text-white/30">:</span> <span className="text-[#c084fc]/80">true</span></div>
+            <div>{"}"}<span className="text-white/30">;</span></div>
           </div>
         )}
         {tab === "stack" && (
-          <div className="space-y-1.5 text-white/50">
-            <div className="text-white/25 mb-3">$ cat stack.sh</div>
-            {[
-              ["WEB", "Next.js 16 App Router"],
-              ["MOBILE", "Flutter · Kotlin · Jetpack"],
-              ["BACKEND", "Supabase & PostgreSQL"],
-              ["LANG", "TypeScript & Python"],
-              ["STYLE", "Tailwind CSS"],
-              ["DESIGN", "Figma · Android Studio"],
-            ].map(([label, value]) => (
+          <div className="space-y-2 text-white/50">
+            <div className="text-white/20 mb-3 text-[11px]">$ cat stack.sh</div>
+            {STACK_ROWS.map(([label, value]) => (
               <div key={label} className="flex items-center gap-3">
-                <span className="text-white/25 w-16 shrink-0">{label}</span>
-                <span className="text-white/25">/</span>
-                <span className="text-white/70">{value}</span>
+                <span className="text-white/20 w-16 shrink-0 text-[11px]">{label}</span>
+                <span className="text-white/15">/</span>
+                <span className="text-[13px] font-mono text-white/70">{value}</span>
               </div>
             ))}
           </div>
@@ -229,17 +294,21 @@ function DevBento() {
         {tab === "status" && (
           <div className="flex flex-col items-center justify-center gap-4 py-4 text-center">
             <div className="relative">
-              <div className="w-16 h-16 rounded-xl overflow-hidden border border-white/10">
+              <div className="w-16 h-16 rounded-xl overflow-hidden border border-white/10 shadow-lg">
                 <img src="/asset/zidan.JPG" alt="EL Zidane" className="w-full h-full object-cover" />
               </div>
-              <span className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-[#22c55e] border-2 border-[#0e101a] text-[9px] flex items-center justify-center text-white font-bold">✓</span>
+              <span
+                className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-[#22c55e] border-2 border-[#0e101a] text-[9px] flex items-center justify-center text-white font-bold"
+                style={{ boxShadow: "0 0 8px rgba(34,197,94,0.7)" }}
+              >✓</span>
             </div>
             <div>
               <div className="text-sm font-semibold text-white/90">EL Zidane Ardyansyah</div>
-              <div className="text-xs text-white/40 font-mono mt-0.5">Fullstack & Mobile Dev · SMK Telkom Malang</div>
+              <div className="text-xs text-white/40 font-mono mt-0.5">Fullstack &amp; Mobile Dev · SMK Telkom Malang</div>
             </div>
             <div className="flex items-center gap-2 text-xs text-white/40 font-mono">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#22c55e] animate-pulse" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[#22c55e] animate-pulse"
+                style={{ boxShadow: "0 0 6px rgba(34,197,94,0.8)" }} />
               Available · Malang, ID (GMT+7)
             </div>
           </div>
@@ -260,8 +329,6 @@ export interface PixelHeroProps {
   onPrimaryClick?: () => void;
   onSecondaryClick?: () => void;
   githubUrl?: string;
-  word1?: string;
-  word2?: string;
 }
 
 export function PixelHero({
@@ -275,110 +342,247 @@ export function PixelHero({
   githubUrl = "https://github.com/elzidanee",
 }: PixelHeroProps) {
   return (
-    <div className="relative w-full isolate flex flex-col" style={{ minHeight: "100dvh" }}>
+    <div
+      className="relative w-full isolate flex flex-col"
+      style={{ minHeight: "100dvh", contain: "layout" }}
+    >
       <style>{`
-        @keyframes zkMarquee {
-          from { transform: translateX(0); }
-          to   { transform: translateX(-25%); }
+        /* ── Ambient orbs (CSS-only, GPU-composited) ── */
+        .zk-orb {
+          position: absolute;
+          border-radius: 50%;
+          pointer-events: none;
+          will-change: transform;
+          transform: translateZ(0);
+          backface-visibility: hidden;
+        }
+        .zk-orb-1 {
+          top: -18%; left: -6%;
+          width: 620px; height: 620px;
+          background: radial-gradient(ellipse at center, rgba(255,255,255,0.04) 0%, transparent 65%);
+          animation: zkFloat1 16s ease-in-out infinite;
+        }
+        .zk-orb-2 {
+          top: 5%; right: -8%;
+          width: 480px; height: 480px;
+          background: radial-gradient(ellipse at center, rgba(255,255,255,0.025) 0%, transparent 65%);
+          animation: zkFloat2 20s ease-in-out infinite;
+        }
+        .zk-orb-3 {
+          bottom: 2%; left: 28%;
+          width: 380px; height: 280px;
+          background: radial-gradient(ellipse at center, rgba(255,255,255,0.02) 0%, transparent 65%);
+          animation: zkFloat3 24s ease-in-out infinite;
+        }
+        @keyframes zkFloat1 {
+          0%,100% { transform: translateZ(0) translate(0,0) scale(1); }
+          33%      { transform: translateZ(0) translate(18px,-14px) scale(1.04); }
+          66%      { transform: translateZ(0) translate(-10px,18px) scale(0.97); }
+        }
+        @keyframes zkFloat2 {
+          0%,100% { transform: translateZ(0) translate(0,0); }
+          50%      { transform: translateZ(0) translate(-22px,18px); }
+        }
+        @keyframes zkFloat3 {
+          0%,100% { transform: translateZ(0) translate(0,0); }
+          50%      { transform: translateZ(0) translate(14px,-18px); }
+        }
+        /* Grid mesh */
+        .zk-grid-mesh {
+          position: absolute; inset: 0;
+          background-image:
+            linear-gradient(rgba(255,255,255,0.013) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.013) 1px, transparent 1px);
+          background-size: 64px 64px;
+          mask-image: radial-gradient(ellipse 75% 55% at 50% 40%, black 28%, transparent 72%);
+          -webkit-mask-image: radial-gradient(ellipse 75% 55% at 50% 40%, black 28%, transparent 72%);
+          pointer-events: none;
+        }
+        /* Staggered entrance */
+        .zk-in-0 { animation: zkUp 0.55s cubic-bezier(0.22,1,0.36,1) both 0.08s; }
+        .zk-in-1 { animation: zkUp 0.6s  cubic-bezier(0.22,1,0.36,1) both 0.18s; }
+        .zk-in-2 { animation: zkUp 0.6s  cubic-bezier(0.22,1,0.36,1) both 0.28s; }
+        .zk-in-3 { animation: zkUp 0.6s  cubic-bezier(0.22,1,0.36,1) both 0.38s; }
+        .zk-in-4 { animation: zkUp 0.6s  cubic-bezier(0.22,1,0.36,1) both 0.48s; }
+        .zk-in-5 { animation: zkUp 0.6s  cubic-bezier(0.22,1,0.36,1) both 0.58s; }
+        .zk-in-r { animation: zkRight 0.7s cubic-bezier(0.22,1,0.36,1) both 0.22s; }
+        @keyframes zkUp {
+          from { opacity:0; transform: translateY(22px); }
+          to   { opacity:1; transform: translateY(0); }
+        }
+        @keyframes zkRight {
+          from { opacity:0; transform: translateX(26px); }
+          to   { opacity:1; transform: translateX(0); }
+        }
+        /* Headline stays plain white — no gradient per original palette */
+        .zk-gtext {
+          color: #ffffff;
+        }
+        .zk-gtext-accent {
+          color: #ffffff;
+        }
+        /* Tag pill */
+        .zk-pill {
+          display: inline-flex; align-items: center; gap: 4px;
+          padding: 4px 10px; border-radius: 6px;
+          font-size: 11px; font-family: 'JetBrains Mono', monospace;
+          color: rgba(255,255,255,0.38);
+          border: 1px solid rgba(255,255,255,0.07);
+          background: rgba(255,255,255,0.025);
+          transition: color .2s, border-color .2s, background .2s;
+          cursor: default;
+        }
+        .zk-pill:hover { color:rgba(255,255,255,0.72); border-color:rgba(255,255,255,0.15); background:rgba(255,255,255,0.05); }
+        /* CTA buttons */
+        .zk-btn-p {
+          display: inline-flex; align-items: center; gap: 8px;
+          height: 44px; padding: 0 24px; border-radius: 10px;
+          background: linear-gradient(135deg,#ffffff 0%,#e8eaf6 100%);
+          color: #0f0f1a; font-size: 14px; font-weight: 700;
+          letter-spacing: -.01em; cursor: pointer; text-decoration: none;
+          transition: transform .18s cubic-bezier(0.22,1,0.36,1), box-shadow .18s ease;
+          box-shadow: 0 4px 16px rgba(255,255,255,0.12), 0 1px 3px rgba(0,0,0,0.3);
+          flex-shrink: 0;
+        }
+        .zk-btn-p:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 8px 24px rgba(255,255,255,0.2); }
+        .zk-btn-p:active { transform: scale(0.98); }
+        .zk-btn-g {
+          display: inline-flex; align-items: center; gap: 8px;
+          height: 44px; padding: 0 20px; border-radius: 10px;
+          font-size: 14px; font-weight: 600;
+          color: rgba(255,255,255,0.55);
+          border: 1px solid rgba(255,255,255,0.09);
+          background: rgba(255,255,255,0.025);
+          cursor: pointer;
+          transition: all .18s ease;
+          backdrop-filter: blur(8px);
+          flex-shrink: 0;
+        }
+        .zk-btn-g:hover { border-color:rgba(255,255,255,0.22); color:rgba(255,255,255,0.9); background:rgba(255,255,255,0.05); transform:translateY(-1px); }
+        .zk-btn-g:active { transform: scale(0.98); }
+        .zk-btn-i {
+          display: inline-flex; align-items: center; justify-content: center;
+          width: 44px; height: 44px; border-radius: 10px;
+          border: 1px solid rgba(255,255,255,0.09);
+          background: rgba(255,255,255,0.025);
+          color: rgba(255,255,255,0.45);
+          cursor: pointer;
+          transition: all .18s ease;
+          backdrop-filter: blur(8px);
+          text-decoration: none;
+          flex-shrink: 0;
+        }
+        .zk-btn-i:hover { border-color:rgba(255,255,255,0.22); color:rgba(255,255,255,0.9); background:rgba(255,255,255,0.05); transform:translateY(-1px); }
+        /* Status badge */
+        .zk-status-badge {
+          display: inline-flex; align-items: center; gap: 8px;
+          font-size: 11px; font-family:'JetBrains Mono',monospace;
+          color: rgba(255,255,255,0.38);
+          border: 1px solid rgba(255,255,255,0.07);
+          background: rgba(255,255,255,0.025);
+          padding: 5px 12px; border-radius: 100px;
+          backdrop-filter: blur(8px);
+        }
+        .zk-status-dot {
+          width:6px; height:6px; border-radius:50%;
+          background:#22c55e; flex-shrink:0;
+          box-shadow: 0 0 8px rgba(34,197,94,0.8);
+          animation: blink 2s infinite ease-in-out;
+        }
+        /* Stat divider */
+        .zk-stat-div { width:1px; height:32px; background:rgba(255,255,255,0.06); }
+        /* Reduce motion */
+        @media (prefers-reduced-motion: reduce) {
+          .zk-in-0,.zk-in-1,.zk-in-2,.zk-in-3,.zk-in-4,.zk-in-5,.zk-in-r {
+            animation: none !important; opacity:1 !important; transform:none !important;
+          }
+          .zk-orb-1,.zk-orb-2,.zk-orb-3 { animation: none !important; }
         }
       `}</style>
 
-      {/* Ambient glow */}
+      {/* Ambient Background */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-[radial-gradient(ellipse_at_top,rgba(255,255,255,0.04)_0%,transparent_65%)] pointer-events-none" />
+        <div className="zk-grid-mesh" />
+        <div className="zk-orb zk-orb-1" />
+        <div className="zk-orb zk-orb-2" />
+        <div className="zk-orb zk-orb-3" />
+        {/* Center top glow */}
+        <div style={{
+          position:"absolute", top:0, left:"50%", transform:"translateX(-50%)",
+          width:"580px", height:"380px",
+          background:"radial-gradient(ellipse at top, rgba(255,255,255,0.035) 0%, transparent 65%)"
+        }} />
       </div>
 
-      {/*
-        MAIN CONTENT AREA
-        - flex-1 so it fills height between navbar and marquee
-        - paddingLeft/Right 8% pushes both columns away from edges
-          making the left headline feel centered, not stuck to left wall
-      */}
+      {/* Main content */}
       <div
         className="relative z-10 w-full flex-1 flex items-center"
         style={{ paddingTop: "92px", paddingBottom: "48px", paddingLeft: "8%", paddingRight: "8%" }}
       >
         <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 
-          {/* LEFT */}
+          {/* ── LEFT ── */}
           <div className="flex flex-col gap-6">
+
             {/* Status */}
-            <div className="flex items-center gap-2 font-mono text-xs text-white/35">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#22c55e] animate-pulse shrink-0" />
-              Available for projects &amp; internship
-              <span className="text-white/20">·</span>
-              Malang, ID
+            <div className="zk-in-0">
+              <span className="zk-status-badge">
+                <span className="zk-status-dot" />
+                Available for projects &amp; internship
+                <span style={{ color:"rgba(255,255,255,0.18)" }}>·</span>
+                Malang, ID
+              </span>
             </div>
 
             {/* Headline */}
-            <div>
-              <h1 className="text-5xl sm:text-6xl lg:text-[62px] xl:text-[70px] font-extrabold tracking-tight text-white leading-[1.04]">
-                Fullstack &amp;{" "}
+            <div className="zk-in-1">
+              <h1 className="text-5xl sm:text-6xl lg:text-[62px] xl:text-[68px] font-extrabold tracking-tight leading-[1.05]">
+                <span className="zk-gtext">Fullstack</span>
+                <span className="text-white/18"> &amp; </span>
                 <br className="hidden sm:block" />
-                Mobile Dev.
+                <span className="zk-gtext-accent">Mobile Dev.</span>
               </h1>
-              <div className="mt-3 text-xs font-mono text-white/25 tracking-[0.2em] uppercase">
+              <div className="mt-3 text-[10px] font-mono text-white/20 tracking-[0.22em] uppercase">
                 EL Zidane Ardyansyah
               </div>
             </div>
 
             {/* Description */}
-            <p className="text-white/50 text-[15px] leading-relaxed max-w-[380px]">
+            <p className="zk-in-2 text-white/50 text-[15px] leading-relaxed max-w-[380px]">
               {description}
             </p>
 
             {/* Stack tags */}
-            <div className="flex flex-wrap gap-1.5">
+            <div className="zk-in-3 flex flex-wrap gap-1.5">
               {["Next.js", "Flutter", "Kotlin", "Supabase", "TypeScript", "Tailwind"].map((tag) => (
-                <span
-                  key={tag}
-                  className="px-2.5 py-1 rounded-md text-xs font-mono text-white/35 border border-white/[0.07] bg-white/[0.025]"
-                >
-                  {tag}
-                </span>
+                <span key={tag} className="zk-pill">{tag}</span>
               ))}
             </div>
 
             {/* CTAs */}
-            <div className="flex items-center gap-3 flex-wrap">
-              <a
-                href="#portfolio"
-                onClick={onPrimaryClick}
-                className="inline-flex h-11 items-center gap-2 px-6 rounded-lg bg-white text-black text-sm font-bold transition-all duration-150 hover:bg-white/90 active:scale-[0.98] cursor-pointer"
-              >
+            <div className="zk-in-4 flex items-center gap-3 flex-wrap">
+              <a href="#portfolio" onClick={onPrimaryClick} className="zk-btn-p">
                 <span className="hidden sm:inline">{primaryCta}</span>
                 <span className="sm:hidden">{primaryCtaMobile}</span>
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight size={15} />
               </a>
-
-              <button
-                id="btn-cv"
-                onClick={onSecondaryClick}
-                className="inline-flex h-11 items-center gap-2 px-5 rounded-lg text-sm font-semibold text-white/60 border border-white/[0.09] hover:border-white/20 hover:text-white transition-all duration-150 active:scale-[0.98] cursor-pointer"
-              >
-                <Download className="w-4 h-4" />
+              <button id="btn-cv" onClick={onSecondaryClick} className="zk-btn-g">
+                <Download size={15} />
                 <span className="hidden sm:inline">{secondaryCta}</span>
                 <span className="sm:hidden">{secondaryCtaMobile}</span>
               </button>
-
-              <a
-                href={githubUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex h-11 w-11 items-center justify-center rounded-lg border border-white/[0.09] hover:border-white/20 text-white/50 hover:text-white transition-all duration-150 cursor-pointer"
-                aria-label="GitHub"
-              >
+              <a href={githubUrl} target="_blank" rel="noopener noreferrer" className="zk-btn-i" aria-label="GitHub">
                 <i className="fab fa-github text-base" />
               </a>
             </div>
 
             {/* Stats */}
-            <div className="flex items-center gap-8 pt-2 border-t border-white/[0.06]">
-              {[["9+", "Proyek"], ["3+", "Tahun"], ["15+", "Tech Stack"]].map(([n, l], idx) => (
+            <div className="zk-in-5 flex items-center gap-8 pt-2 border-t border-white/[0.05]">
+              {[["9+","Proyek"],["3+","Tahun"],["15+","Tech Stack"]].map(([n,l],idx) => (
                 <React.Fragment key={l}>
-                  {idx > 0 && <div className="w-px h-8 bg-white/[0.06]" />}
+                  {idx > 0 && <div className="zk-stat-div" />}
                   <div>
-                    <div className="text-2xl font-bold font-mono text-white">{n}</div>
+                    <div className="text-2xl font-bold font-mono text-white tracking-tight">{n}</div>
                     <div className="text-[11px] font-mono text-white/25 uppercase tracking-wider mt-0.5">{l}</div>
                   </div>
                 </React.Fragment>
@@ -386,8 +590,8 @@ export function PixelHero({
             </div>
           </div>
 
-          {/* RIGHT — Bento */}
-          <div className="flex items-center justify-center lg:justify-end">
+          {/* ── RIGHT — Bento ── */}
+          <div className="zk-in-r flex items-center justify-center lg:justify-end">
             <div className="w-full max-w-[460px]">
               <DevBento />
             </div>
