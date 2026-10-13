@@ -296,7 +296,7 @@ export function PixelHero({
       */}
       <div
         className="relative z-10 w-full flex-1 flex items-center"
-        style={{ paddingTop: "66px", paddingBottom: "48px", paddingLeft: "8%", paddingRight: "8%" }}
+        style={{ paddingTop: "92px", paddingBottom: "48px", paddingLeft: "8%", paddingRight: "8%" }}
       >
         <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 

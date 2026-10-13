@@ -90,8 +90,7 @@ export const Card = ({
       style={{
         rotateX: rotate,
         scale,
-        boxShadow:
-          "0 20px 50px rgba(0, 0, 0, 0.6), 0 0 40px rgba(59, 130, 246, 0.1)",
+        boxShadow: "0 20px 40px rgba(0, 0, 0, 0.5)",
       }}
       className="max-w-5xl mx-auto h-[20rem] sm:h-[26rem] md:h-[32rem] w-full border border-white/10 p-1.5 md:p-3 bg-[#10131c] rounded-2xl shadow-2xl overflow-hidden transform-gpu will-change-transform"
     >

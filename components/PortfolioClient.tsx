@@ -45,15 +45,19 @@ export default function PortfolioClient() {
     waitForLibs(() => {
       if (isCleanedUp) return;
 
-      /* ── LENIS SMOOTH SCROLL INITIALIZATION ──────────────────── */
+      /* ── LENIS SMOOTH SCROLL INITIALIZATION (SNAPPY & LIGHTWEIGHT) ─ */
       let lenis: any = null;
+      let isUserScrolling = false;
+      let scrollTimer: any = null;
+
       if (typeof window.Lenis !== "undefined") {
         lenis = new window.Lenis({
-          duration: 0.8,
+          duration: 0.5,
           easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
           smoothWheel: true,
-          wheelMultiplier: 1.0,
-          touchMultiplier: 1.2,
+          wheelMultiplier: 1.15,
+          touchMultiplier: 1.5,
+          syncTouch: false,
         });
         window.lenis = lenis;
 
@@ -65,7 +69,7 @@ export default function PortfolioClient() {
           gsap.ticker.add((time: number) => {
             lenis.raf(time * 1000);
           });
-          gsap.ticker.lagSmoothing(500, 33);
+          gsap.ticker.lagSmoothing(0);
         } else {
           const raf = (time: number) => {
             lenis.raf(time);
@@ -73,6 +77,14 @@ export default function PortfolioClient() {
           };
           requestAnimationFrame(raf);
         }
+
+        lenis.on("scroll", () => {
+          isUserScrolling = true;
+          clearTimeout(scrollTimer);
+          scrollTimer = setTimeout(() => {
+            isUserScrolling = false;
+          }, 150);
+        });
       }
 
       /* ── SPLASH SCREEN LOADER ────────────────────────────────── */
@@ -487,7 +499,7 @@ export default function PortfolioClient() {
       }
       setTimeout(type, 1200);
 
-      /* ── DYNAMIC SPOTLIGHT TRACKER (THROTTLED) ────────────────── */
+      /* ── DYNAMIC SPOTLIGHT TRACKER (THROTTLED & SCROLL-GUARDED) ── */
       const spotlightCards = document.querySelectorAll(
         ".spotlight-card"
       ) as NodeListOf<HTMLElement>;
@@ -496,6 +508,7 @@ export default function PortfolioClient() {
       document.addEventListener(
         "mousemove",
         (e) => {
+          if (isUserScrolling) return; // Prevent layout reflow during scroll
           lastMouseX = e.clientX;
           lastMouseY = e.clientY;
           if (!spotlightRAF) {
@@ -706,7 +719,7 @@ export default function PortfolioClient() {
               scrollTrigger: {
                 trigger: hdr,
                 start: "top 88%",
-                toggleActions: "play none none reverse",
+                toggleActions: "play none none none",
               },
             }
           );
@@ -724,123 +737,11 @@ export default function PortfolioClient() {
               scrollTrigger: {
                 trigger: item,
                 start: "top 85%",
-                toggleActions: "play none none reverse",
+                toggleActions: "play none none none",
               },
             }
           );
         });
-      }
-
-      /* ── THREE.JS 3D PERSISTENT CANVAS (OPTIMIZED) ─────────────── */
-      const canvas = document.getElementById(
-        "three-canvas"
-      ) as HTMLCanvasElement;
-      const THREE = window.THREE;
-      if (canvas && typeof THREE !== "undefined") {
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(
-          65,
-          window.innerWidth / window.innerHeight,
-          0.1,
-          1000
-        );
-        camera.position.z = 24;
-
-        const renderer = new THREE.WebGLRenderer({
-          canvas: canvas,
-          alpha: true,
-          antialias: false, // Disable antialias for performance
-          powerPreference: "low-power",
-        });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(1); // Always 1x — no retina overhead
-
-        // Reduced particle count: 420 → 180
-        const particlesCount = 180;
-        const posArray = new Float32Array(particlesCount * 3);
-        const colorArray = new Float32Array(particlesCount * 3);
-
-        const colorSlate = new THREE.Color(0x64748b);
-        const colorAccent = new THREE.Color(0x5b7fff);
-
-        for (let i = 0; i < particlesCount; i++) {
-          const i3 = i * 3;
-          const radius = 10 + Math.random() * 40;
-          const theta = Math.random() * Math.PI * 2;
-          posArray[i3] = Math.cos(theta) * radius;
-          posArray[i3 + 1] = (Math.random() - 0.5) * 80;
-          posArray[i3 + 2] = (Math.random() - 0.5) * 55;
-
-          const chosen = Math.random() > 0.3 ? colorSlate : colorAccent;
-          colorArray[i3] = chosen.r;
-          colorArray[i3 + 1] = chosen.g;
-          colorArray[i3 + 2] = chosen.b;
-        }
-
-        const geometry = new THREE.BufferGeometry();
-        geometry.setAttribute(
-          "position",
-          new THREE.BufferAttribute(posArray, 3)
-        );
-        geometry.setAttribute("color", new THREE.BufferAttribute(colorArray, 3));
-
-        const material = new THREE.PointsMaterial({
-          size: 0.08,
-          vertexColors: true,
-          transparent: true,
-          opacity: 0.3,
-          blending: THREE.AdditiveBlending,
-        });
-
-        const particlesMesh = new THREE.Points(geometry, material);
-        scene.add(particlesMesh);
-
-        let scrollProgress = 0;
-
-        const handleResize = () => {
-          camera.aspect = window.innerWidth / window.innerHeight;
-          camera.updateProjectionMatrix();
-          renderer.setSize(window.innerWidth, window.innerHeight);
-        };
-        window.addEventListener("resize", handleResize, { passive: true });
-
-        if (lenis) {
-          lenis.on("scroll", (e: any) => {
-            scrollProgress = e.progress || 0;
-          });
-        } else {
-          window.addEventListener(
-            "scroll",
-            () => {
-              const max =
-                document.documentElement.scrollHeight - window.innerHeight;
-              scrollProgress = max > 0 ? window.scrollY / max : 0;
-            },
-            { passive: true }
-          );
-        }
-
-        const clock = new THREE.Clock();
-        let animationFrameId: number;
-        let lastThreeTime = 0;
-        const THREE_INTERVAL = 33; // ~30fps for THREE.js canvas
-
-        function animate3D(ts: number) {
-          if (isCleanedUp) return;
-          animationFrameId = requestAnimationFrame(animate3D);
-          if (ts - lastThreeTime < THREE_INTERVAL) return;
-          lastThreeTime = ts;
-
-          const elapsedTime = clock.getElapsedTime();
-          particlesMesh.rotation.y = elapsedTime * 0.012 + scrollProgress * Math.PI * 0.4;
-          particlesMesh.rotation.x = scrollProgress * 0.2;
-
-          const targetCamZ = 24 - scrollProgress * 10;
-          camera.position.z += (targetCamZ - camera.position.z) * 0.04;
-
-          renderer.render(scene, camera);
-        }
-        animate3D(0);
       }
 
       /* ── DARK / LIGHT MODE TOGGLE ────────────────────────────── */

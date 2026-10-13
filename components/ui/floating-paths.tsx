@@ -17,22 +17,22 @@ interface FloatingPathsProps {
 export function FloatingPaths({ position = 1, className }: FloatingPathsProps) {
   const svgRef = useRef<SVGSVGElement>(null);
 
-  // Generate paths only once
+  // Generate optimized paths (8 paths instead of 24 for ultra-lightweight GPU raster)
   const paths = React.useMemo(
     () =>
-      Array.from({ length: 24 }, (_, i) => ({
+      Array.from({ length: 8 }, (_, i) => ({
         id: i,
-        d: `M-${380 - i * 5 * position} -${189 + i * 6}C-${
-          380 - i * 5 * position
-        } -${189 + i * 6} -${312 - i * 5 * position} ${216 - i * 6} ${
-          152 - i * 5 * position
-        } ${343 - i * 6}C${616 - i * 5 * position} ${470 - i * 6} ${
-          684 - i * 5 * position
-        } ${875 - i * 6} ${684 - i * 5 * position} ${875 - i * 6}`,
-        strokeWidth: 0.6 + i * 0.03,
-        opacity: 0.05 + (i / 24) * 0.15,
-        duration: 22 + (i % 7) * 2.5,
-        delay: (i / 24) * 8,
+        d: `M-${380 - i * 15 * position} -${189 + i * 18}C-${
+          380 - i * 15 * position
+        } -${189 + i * 18} -${312 - i * 15 * position} ${216 - i * 18} ${
+          152 - i * 15 * position
+        } ${343 - i * 18}C${616 - i * 15 * position} ${470 - i * 18} ${
+          684 - i * 15 * position
+        } ${875 - i * 18} ${684 - i * 15 * position} ${875 - i * 18}`,
+        strokeWidth: 0.8 + i * 0.05,
+        opacity: 0.08 + (i / 8) * 0.15,
+        duration: 22 + (i % 5) * 3,
+        delay: (i / 8) * 6,
       })),
     [position]
   );
