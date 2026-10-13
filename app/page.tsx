@@ -4,6 +4,7 @@ import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 import { BorderBeam } from "@/components/ui/border-beam";
 import { PixelHero } from "@/components/ui/pixel-perfect-hero";
 import { CleanBackground } from "@/components/ui/clean-background";
+import Timeline from "@/components/ui/timeline";
 
 export default function Home() {
   return (
@@ -381,46 +382,7 @@ export default function Home() {
           </div>
 
           {/* ─── 3D FLAGSHIP SHOWCASE (21ST.DEV) ────────────────── */}
-          <div className="w-full max-w-5xl mx-auto my-2 md:my-4">
-            <ContainerScroll
-              titleComponent={
-                <div className="mb-3">
-                  <span className="hero-tag mb-3 inline-flex text-xs">
-                    <span className="hero-tag-dot"></span>
-                    FLAGSHIP LIVE PLATFORM
-                  </span>
-                  <h3 className="text-xl md:text-3xl font-extrabold text-white tracking-tight">
-                    Membangun Arsitektur Web &amp; Mobile
-                    <br />
-                    <span className="line-accent">Interaktif &amp; Skalabilitas Nyata</span>
-                  </h3>
-                </div>
-              }
-            >
-              <div className="relative w-full h-full flex flex-col justify-between overflow-hidden bg-[#0e111a] rounded-xl border border-white/10">
-                <div className="flex items-center gap-2 px-4 py-3 bg-[#141724] border-b border-white/10">
-                  <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
-                  <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
-                  <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
-                  <a
-                    href="https://eazychise.vercel.app"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="ml-2 text-xs font-mono text-cyan-400 hover:underline bg-black/40 px-3 py-1 rounded-full border border-white/5 flex items-center gap-1.5"
-                  >
-                    https://eazychise.vercel.app <i className="fas fa-external-link-alt text-[10px]"></i>
-                  </a>
-                </div>
-                <div className="relative flex-1 overflow-hidden">
-                  <img
-                    src="/asset/eazychise.png"
-                    alt="EazyChise Showcase"
-                    className="w-full h-full object-cover object-top"
-                  />
-                </div>
-              </div>
-            </ContainerScroll>
-          </div>
+
 
           <div className="projects-bento-grid">
             {/* Card 1 — EazyChise (Featured Flagship) */}
@@ -1472,121 +1434,36 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ─── EXPERIENCE ────────────────────────────────────────── */}
+      {/* ─── EXPERIENCE ──────────────────────────────────────────── */}
       <section
         id="experience"
-        style={{ position: "relative", overflow: "hidden" }}
+        style={{ position: "relative", overflow: "visible" }}
       >
-        {/* Parallax Background Elements */}
-        <div
-          className="bg-text-parallax"
-          data-parallax
-          data-parallax-dir="x"
-          data-speed="-0.15"
-          data-rotate="-3"
-          style={{ top: "25%", right: "2%" }}
-        >
-          TIMELINE
-        </div>
-        <div
-          className="hero-orb"
-          data-parallax
-          data-speed="0.1"
-          style={{
-            width: "400px",
-            height: "400px",
-            background: "radial-gradient(circle, rgba(0,229,195,0.07) 0%, transparent 70%)",
-            bottom: "15%",
-            left: "10%",
-            position: "absolute",
-            zIndex: -1,
-            borderRadius: "50%",
-          }}
-        ></div>
-
-        <div className="section-inner">
+        {/* Section header */}
+        <div className="section-inner" style={{ paddingTop: "6.5rem", paddingBottom: "2rem" }}>
           <div className="section-header fade-in">
             <div className="section-eyebrow">PERJALANAN</div>
             <h2 className="section-h2">Pengalaman &amp; Pendidikan</h2>
             <p className="section-sub">
-              Timeline perjalanan belajar dan pengalaman saya di dunia
-              teknologi.
+              Timeline perjalanan belajar dan pengalaman saya di dunia teknologi.
             </p>
             <div className="divider"></div>
           </div>
-          <div className="timeline">
-              <div className="timeline-item">
-                <div className="timeline-dot"></div>
-                <div className="timeline-date">2024 — SEKARANG</div>
-                <div className="timeline-title">
-                  Siswa Rekayasa Perangkat Lunak
-                </div>
-                <div className="timeline-org">SMK Telkom Malang</div>
-                <div className="timeline-desc">
-                  Mempelajari pengembangan perangkat lunak dari dasar pemrograman,
-                  OOP, basis data, hingga proyek nyata. Aktif dalam berbagai
-                  kompetisi IT tingkat regional dan nasional.
-                </div>
-              </div>
-              <div className="timeline-item">
-                <div className="timeline-dot"></div>
-                <div className="timeline-date">JUNI 2026 — SEKARANG</div>
-                <div className="timeline-title">
-                  Full Stack Web Developer — EazyChise
-                </div>
-                <div className="timeline-org">Web Creation Competition</div>
-                <div className="timeline-desc">
-                  Mengembangkan platform marketplace waralaba responsif
-                  menggunakan Next.js, Tailwind CSS, dan Vercel. Mengimplementasikan
-                  fitur autentikasi, pencarian multi-kategori, kalkulator simulasi
-                  keuntungan, dan formulir digital berbasis Supabase.
-                </div>
-              </div>
-              <div className="timeline-item">
-                <div className="timeline-dot"></div>
-                <div className="timeline-date">APRIL 2026 — SEKARANG</div>
-                <div className="timeline-title">
-                  Mobile Application Developer — Monsef
-                </div>
-                <div className="timeline-org">Project Mandiri</div>
-                <div className="timeline-desc">
-                  Merancang dan membangun aplikasi pencatat keuangan mobile dari
-                  awal hingga produksi menggunakan Flutter &amp; Dart.
-                  Mengintegrasikan OCR API (Scan Struk), Speech-to-Text, dan
-                  Supabase untuk efisiensi otomatisasi input transaksi.
-                </div>
-              </div>
-              <div className="timeline-item">
-                <div className="timeline-dot"></div>
-                <div className="timeline-date">JUNI 2026 — SEKARANG</div>
-                <div className="timeline-title">
-                  Mobile Application Developer — HaloAir
-                </div>
-                <div className="timeline-org">Project Mandiri</div>
-                <div className="timeline-desc">
-                  Mengembangkan aplikasi mobile manajemen PDAM dengan Flutter
-                  menggunakan arsitektur Multi-Role (Admin &amp; User).
-                  Mengintegrasikan RESTful API untuk sinkronisasi data operasional
-                  dan manajemen tagihan real-time.
-                </div>
-              </div>
-              <div className="timeline-item">
-                <div className="timeline-dot"></div>
-                <div className="timeline-date">MEI 2025 — SEKARANG</div>
-                <div className="timeline-title">
-                  UI/UX Designer — PortaTrip
-                </div>
-                <div className="timeline-org">Lomba Design</div>
-                <div className="timeline-desc">
-                  Merancang User Flow dan Wireframe platform aplikasi wisata dan
-                  pemesanan porter guide menggunakan Figma dan Whimsical. Membangun
-                  Interactive Prototype untuk validasi alur navigasi yang intuitif
-                  dan responsif.
-                </div>
-              </div>
-            </div>
         </div>
       </section>
+
+      {/* Horizontal Scroll Timeline */}
+      <Timeline
+        title="Perjalanan Saya"
+        periodLabel="2024 — 2026"
+        backgroundColor="#090a0f"
+        textColor="#ffffff"
+        mutedTextColor="rgba(255,255,255,0.65)"
+        activeColor="#ffffff"
+        imageUrl="/asset/foto123.png"
+        imageAlt="EL Zidane Ardyansyah"
+        duration={1.4}
+      />
 
       {/* ─── CONTACT ───────────────────────────────────────────── */}
       <section

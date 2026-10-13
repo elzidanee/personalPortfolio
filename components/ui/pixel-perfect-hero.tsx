@@ -321,6 +321,8 @@ function DevBento() {
 /* ─── PIXEL HERO ─────────────────────────────────────────────────── */
 
 export interface PixelHeroProps {
+  word1?: string;
+  word2?: string;
   description?: string;
   primaryCta?: string;
   primaryCtaMobile?: string;
@@ -332,6 +334,8 @@ export interface PixelHeroProps {
 }
 
 export function PixelHero({
+  word1 = "Fullstack",
+  word2 = "Mobile Dev.",
   description = "Siswa RPL di SMK Telkom Malang. Membangun web modern dengan Next.js dan aplikasi mobile performatif dengan Flutter & Kotlin.",
   primaryCta = "Lihat Portofolio",
   primaryCtaMobile = "Portofolio",
@@ -537,10 +541,10 @@ export function PixelHero({
             {/* Headline */}
             <div className="zk-in-1">
               <h1 className="text-5xl sm:text-6xl lg:text-[62px] xl:text-[68px] font-extrabold tracking-tight leading-[1.05]">
-                <span className="zk-gtext">Fullstack</span>
-                <span className="text-white/18"> &amp; </span>
+                <span className="zk-gtext">{word1}</span>
+                <span className="text-white/18"> </span>
                 <br className="hidden sm:block" />
-                <span className="zk-gtext-accent">Mobile Dev.</span>
+                <span className="zk-gtext-accent">{word2}</span>
               </h1>
               <div className="mt-3 text-[10px] font-mono text-white/20 tracking-[0.22em] uppercase">
                 EL Zidane Ardyansyah
